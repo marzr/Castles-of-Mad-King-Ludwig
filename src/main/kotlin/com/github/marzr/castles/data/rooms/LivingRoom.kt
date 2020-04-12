@@ -5,7 +5,7 @@ import com.github.marzr.castles.data.RoomType
 
 interface LivingRoom : RoomTile {
     override val roomType: RoomType
-        get() = RoomType.ACTIVITY
+        get() = RoomType.LIVING
 }
 
 class SmallSquareLivingRoom(

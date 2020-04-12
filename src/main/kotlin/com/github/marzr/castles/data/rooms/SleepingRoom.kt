@@ -5,7 +5,7 @@ import com.github.marzr.castles.data.RoomType
 
 interface SleepingRoom : RoomTile, CenterBonusTile<CenterBonus.Door> {
     override val roomType: RoomType
-        get() = RoomType.FOOD
+        get() = RoomType.SLEEPING
 }
 
 class SquareSleepingRoom(
