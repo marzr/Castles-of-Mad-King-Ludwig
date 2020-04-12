@@ -37,7 +37,6 @@ interface SmallCircleRoom : RoomTile {
         get() = FigureType.SMALL_CIRCLE
 }
 
-
 interface MiddleRectangleRoom : RoomTile {
     override val figureType: FigureType
         get() = FigureType.MIDDLE_RECTANGLE

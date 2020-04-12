@@ -8,9 +8,9 @@ interface RoomTile : Tile {
     val title: String
     val figureType: FigureType
     val cornerBonus: Int
+    val doors: List<Door>
 }
 
 interface CenterBonusTile<CB : CenterBonus> : Tile {
     val centerBonus: CB
 }
-

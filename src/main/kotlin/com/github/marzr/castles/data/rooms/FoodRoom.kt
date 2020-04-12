@@ -8,7 +8,10 @@ interface FoodRoom : RoomTile {
         get() = RoomType.FOOD
 }
 
-class SmallSquareFoodRoom(override val title: String) : FoodRoom, SmallSquareRoom {
+class SmallSquareFoodRoom(
+    override val title: String,
+    override val doors: List<Door>
+) : FoodRoom, SmallSquareRoom {
     override val cornerBonus = 2
 }
 
@@ -22,22 +25,26 @@ abstract class CenterBonusFoodRoom(
 
 class SmallRectangleFoodRoom(
     override val title: String,
-    bonusRoomType: RoomType
+    bonusRoomType: RoomType,
+    override val doors: List<Door>
 ) : CenterBonusFoodRoom(title, bonusRoomType), SmallRectangleRoom
 
 class LFormFoodRoom(
     override val title: String,
-    bonusRoomType: RoomType
+    bonusRoomType: RoomType,
+    override val doors: List<Door>
 ) : CenterBonusFoodRoom(title, bonusRoomType), LRoom
 
 val foodRooms = listOf(
-    SmallSquareFoodRoom("Кухонька"),
-    SmallSquareFoodRoom("Склад масла"),
-    SmallSquareFoodRoom("Кладовая"),
-    SmallRectangleFoodRoom("Мясной склад", RoomType.OUTDOOR),
-    SmallRectangleFoodRoom("Мясной склад", RoomType.ACTIVITY),
-    SmallRectangleFoodRoom("Мясной склад", RoomType.SLEEPING),
-    LFormFoodRoom("Обеденный зал", RoomType.LIVING),
-    LFormFoodRoom("Буфетная", RoomType.UTILITY),
-    LFormFoodRoom("Кухня", RoomType.FOOD)
+    SmallSquareFoodRoom("Кухонька", doors(L(2), R(2))),
+    SmallSquareFoodRoom("Склад масла", doors(L(), R(2))),
+    SmallSquareFoodRoom("Кладовая", doors(L(2), R())),
+
+    SmallRectangleFoodRoom("Мясной склад", RoomType.OUTDOOR, doors(L(), R())),
+    SmallRectangleFoodRoom("Заготовочная", RoomType.ACTIVITY, doors(T(4), B(4))),
+    SmallRectangleFoodRoom("Прихожая", RoomType.SLEEPING, doors(T(2), B(3))),
+
+    LFormFoodRoom("Обеденный зал", RoomType.LIVING, doors(L(2), R(3))),
+    LFormFoodRoom("Буфетная", RoomType.UTILITY, doors(L(4), R(3))),
+    LFormFoodRoom("Кухня", RoomType.FOOD, doors(R(2), B(2)))
 )
