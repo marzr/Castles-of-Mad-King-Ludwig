@@ -14,3 +14,8 @@ interface RoomTile : Tile {
 interface CenterBonusTile<CB : CenterBonus> : Tile {
     val centerBonus: CB
 }
+
+val allRooms = activityRooms as List<RoomTile> + corridorRooms + downstairsRooms + foodRooms + livingRooms +
+        outdoorRooms + sleepingRooms + utilityRooms
+
+val roomsByTitle = allRooms.associateBy { it.title }
