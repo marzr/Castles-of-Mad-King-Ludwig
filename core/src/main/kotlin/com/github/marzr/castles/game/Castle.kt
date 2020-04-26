@@ -1,20 +1,31 @@
 package com.github.marzr.castles.game
 
-import com.github.marzr.castles.data.Tile
-import com.github.marzr.castles.geometry.Position
+import com.github.marzr.castles.geometry.HalfPoint
+import com.github.marzr.castles.geometry.PositionedTile
+import com.github.marzr.castles.geometry.toFigure
 
 interface ICastle {
 
-    fun addTile(tile: Tile, position: Position): TileAddResult
+    fun addTile(positionedTile: PositionedTile): TileAddResult
 }
 
 sealed class TileAddResult {
-    class Success(val castle: Castle, val reward: InstantReward) : TileAddResult()
+    data class Success(val reward: InstantReward) : TileAddResult()
     object Fail : TileAddResult()
 }
 
 class Castle : ICastle {
-    override fun addTile(tile: Tile, position: Position): TileAddResult {
-        TODO("Not yet implemented")
+    private val tiles = mutableListOf<PositionedTile>()
+    private val occupiedHalfPoints = mutableSetOf<HalfPoint>()
+
+    override fun addTile(positionedTile: PositionedTile): TileAddResult {
+        val innerPoints = (positionedTile.toFigure().setOfInnerPoints())
+        return if (occupiedHalfPoints.all { !innerPoints.contains(it) }) {
+            tiles.add(positionedTile)
+            occupiedHalfPoints.addAll(positionedTile.toFigure().setOfPoints())
+
+            TileAddResult.Success(InstantReward(0))
+        } else
+            TileAddResult.Fail
     }
 }
