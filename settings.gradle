@@ -1,0 +1,3 @@
+rootProject.name = "castles"
+include("core")
+include("graphics")
