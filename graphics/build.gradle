@@ -1,5 +1,20 @@
 plugins {
     id "org.jetbrains.kotlin.jvm"
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "11"
+}
+
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "11"
+}
+
+javafx {
+    version = "11.0.2"
+    modules = ['javafx.controls', 'javafx.graphics']
 }
 
 dependencies {
