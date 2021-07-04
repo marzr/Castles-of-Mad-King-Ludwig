@@ -7,6 +7,7 @@ class HalfPointTest {
 
     @Test
     fun testDistance() {
-        assertEquals(2.0, HalfPoint(0, 0).distance(HalfPoint(4, 0)) , 0.001)
+        val dist = HalfPoint(0, 0).distance(HalfPoint(4, 0))
+        assertEquals(2.0, dist, 0.001)
     }
 }
