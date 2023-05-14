@@ -1,4 +1,7 @@
-package com.github.marzr.castles.data
+package com.github.marzr.castles.data.bonus
+
+import com.github.marzr.castles.data.FigureType
+import com.github.marzr.castles.data.RoomType
 
 interface KingsFavor {
 

@@ -16,5 +16,3 @@ data class Position(val x: Int, val y: Int, val rotation: Rotation = Rotation.R0
         R0, R90, R180, R270
     }
 }
-
-data class FigurePosition(val x: Int, val y: Int)

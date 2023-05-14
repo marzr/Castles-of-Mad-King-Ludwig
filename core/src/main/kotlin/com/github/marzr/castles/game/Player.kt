@@ -1,6 +1,6 @@
 package com.github.marzr.castles.game
 
-import com.github.marzr.castles.data.BonusCard
+import com.github.marzr.castles.data.bonus.BonusCard
 
 data class Player(
     val name: String,

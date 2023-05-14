@@ -1,6 +1,6 @@
 package com.github.marzr.castles.data.rooms
 
-import com.github.marzr.castles.data.CenterBonus
+import com.github.marzr.castles.data.bonus.CenterBonus
 import com.github.marzr.castles.data.RoomType
 
 interface SleepingRoom : RoomTile, CenterBonusTile<CenterBonus.Door> {

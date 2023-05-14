@@ -1,4 +1,6 @@
-package com.github.marzr.castles.data
+package com.github.marzr.castles.data.bonus
+
+import com.github.marzr.castles.data.RoomType
 
 open class CenterBonus(
     open val points: Int,
