@@ -3,7 +3,6 @@ package com.github.marzr.castles.game
 import com.github.marzr.castles.data.bonus.BonusCard
 import com.github.marzr.castles.data.bonus.KingsFavor
 import com.github.marzr.castles.data.rooms.allRooms
-import java.util.*
 
 @ExperimentalStdlibApi
 class Game(playersCount: Int) {
@@ -13,7 +12,6 @@ class Game(playersCount: Int) {
     val kingsFavors = Deck(KingsFavor.allFavors).issue(playersCount)
 
     val market = Market(playersCount)
-    val points = mutableMapOf<Player, Int>()
     val players = Players(playersCount)
 
     init {
@@ -26,7 +24,7 @@ class Game(playersCount: Int) {
 
     fun nextTurn() {
         market.fullfill(roomsDeck)
-        players.next()
+        players.nextTurn()
     }
 }
 
@@ -37,14 +35,15 @@ fun main() {
     println(game.kingsFavors)
     println(game.market)
 
-    game.market.buy(game.players.current(), Market.Price.PRICE_1000)
+    val buyer = game.players.currentBuyer()
+    game.market.buy(buyer, game.players.builder(), Market.Price.PRICE_1000)
 
     println(game.market)
 
-    println(game.players.current())
-
+    println(game.players.builder())
+    println(buyer)
     game.nextTurn()
     println("----------------")
 
-    println(game.players.current())
+    println(game.players.builder())
 }

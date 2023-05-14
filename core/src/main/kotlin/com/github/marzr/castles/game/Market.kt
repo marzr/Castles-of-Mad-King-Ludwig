@@ -27,9 +27,14 @@ class Market(playersCount: Int) {
         }
     }
 
-    fun buy(player: Player, price: Price): RoomTile {
-        val (room, discount) = tilesMap[price] ?: throw IllegalStateException("$player wants buy null")
-        player.money -= (price.amount - discount)
+    fun buy(buyer: Player, seller: Player, price: Price): RoomTile {
+        val (room, discount) = tilesMap[price] ?: throw IllegalStateException("$buyer wants buy null")
+        buyer.money -= price.amount
+        if (buyer.money < 0) throw IllegalStateException("$buyer money < 0")
+        buyer.money += discount
+
+        if (buyer != seller)
+            seller.money += price.amount
         return room
     }
 
