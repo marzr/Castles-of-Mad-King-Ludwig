@@ -9,6 +9,7 @@ data class Player(
     // TODO move to safe class PlayerState
     var money: Int = 0,
     val bonuses: MutableList<BonusCard> = mutableListOf(),
+    val bonusesToChoose: MutableList<BonusCard> = mutableListOf(),
     var points: Int = 0,
     val castle: Castle = Castle()
     // move

@@ -5,7 +5,7 @@ import com.github.marzr.castles.data.RoomType
 
 interface BonusCard {
 
-    companion object{
+    companion object {
         val allBonusCards = RoomBonusCard.listCards() + SizeBonusCard.listCards()
     }
 
@@ -27,7 +27,7 @@ interface BonusCard {
         }
     }
 
-    data class SizeBonusCard(val points: Int, val figureType: FigureType) {
+    data class SizeBonusCard(val points: Int, val figureType: FigureType) : BonusCard {
         companion object {
             private fun points(figureType: FigureType): Int = when (figureType) {
                 FigureType.BIG_CIRCLE -> 3

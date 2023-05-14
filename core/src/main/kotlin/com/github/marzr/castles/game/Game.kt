@@ -3,11 +3,12 @@ package com.github.marzr.castles.game
 import com.github.marzr.castles.data.bonus.BonusCard
 import com.github.marzr.castles.data.bonus.KingsFavor
 import com.github.marzr.castles.data.rooms.allRooms
+import java.lang.IllegalStateException
 
 @ExperimentalStdlibApi
 class Game(playersCount: Int) {
-    val roomsDeck = Deck(allRooms)
-    val bonusDeck = Deck(BonusCard.allBonusCards)
+    private val roomsDeck = Deck(allRooms)
+    private val bonusDeck = Deck(BonusCard.allBonusCards)
 
     val kingsFavors = Deck(KingsFavor.allFavors).issue(playersCount)
 
@@ -19,10 +20,24 @@ class Game(playersCount: Int) {
             it.money = 15000
         }
 
+        players.list.forEach {
+            it.bonusesToChoose.addAll(bonusDeck.issue(3))
+        }
+
         market.fullfill(roomsDeck)
     }
 
+    fun startGame() {
+        checkBonusesChosen()
+    }
+
+    private fun checkBonusesChosen() {
+        if (players.list.find { it.bonusesToChoose.isNotEmpty() } != null)
+            throw IllegalStateException("Players should choose bonus cards")
+    }
+
     fun nextTurn() {
+        checkBonusesChosen()
         market.fullfill(roomsDeck)
         players.nextTurn()
     }
@@ -30,20 +45,25 @@ class Game(playersCount: Int) {
 
 @ExperimentalStdlibApi
 fun main() {
+    with(Game(4)) {
+        players.list.forEach {
+            it.bonuses.addAll(it.bonusesToChoose.take(2))
+            it.bonusesToChoose.clear()
+        }
+        startGame()
+        println(kingsFavors)
+        println(market)
 
-    val game = Game(4)
-    println(game.kingsFavors)
-    println(game.market)
+        val buyer = players.currentBuyer()
+        market.buy(buyer, players.builder(), Market.Price.PRICE_1000)
 
-    val buyer = game.players.currentBuyer()
-    game.market.buy(buyer, game.players.builder(), Market.Price.PRICE_1000)
+        println(market)
 
-    println(game.market)
+        println(players.builder())
+        println(buyer)
+        nextTurn()
+        println("----------------")
 
-    println(game.players.builder())
-    println(buyer)
-    game.nextTurn()
-    println("----------------")
-
-    println(game.players.builder())
+        println(players.builder())
+    }
 }
