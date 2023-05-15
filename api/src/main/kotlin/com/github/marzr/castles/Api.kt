@@ -1,8 +1,8 @@
 package com.github.marzr.castles
 
-import com.github.marzr.castles.dto.GameDto
 import com.github.marzr.castles.dto.GameSettingsDto
 import com.github.marzr.castles.dto.PositionedTileDto
+import com.github.marzr.castles.dto.toDto
 import com.github.marzr.castles.game.GameService
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -42,10 +42,13 @@ fun startServer(gameService: GameService) {
                 }
                 post("/game") {
                     val gameSettings = call.receive<GameSettingsDto>()
-                    val game = gameService.createGame(gameSettings.playersCount)
-                    call.respond(GameDto(game.id))
+                    val game = gameService.createGame(gameSettings.playersCount).toDto()
+                    call.respond(game)
                 }
-
+                get("/game/{id}") {
+                    val gameId = call.parameters["id"]?.toLongOrNull() ?: TODO("400")
+                    gameService.getGame(gameId)?.toDto() ?: TODO("404")
+                }
                 post("/game/{id}/buildRoom") {
                     val gameId = call.parameters["id"]
                     val tile = call.receive<PositionedTileDto>()
