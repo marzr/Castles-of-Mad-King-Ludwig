@@ -1,11 +1,11 @@
 package com.github.marzr.castles.data
 
 interface Tile {
-    val roomType: RoomType
+    val roomPurpose: RoomPurpose
 }
 
 abstract class CorridorTile : Tile {
-    override val roomType = RoomType.CORRIDOR
+    override val roomPurpose = RoomPurpose.CORRIDOR
 }
 
 class Stairs : CorridorTile()

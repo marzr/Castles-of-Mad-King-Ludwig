@@ -1,10 +1,10 @@
 package com.github.marzr.castles.data.rooms
 
-import com.github.marzr.castles.data.RoomType
+import com.github.marzr.castles.data.RoomPurpose
 
 interface UtilityRoom : RoomTile {
-    override val roomType: RoomType
-        get() = RoomType.UTILITY
+    override val roomPurpose: RoomPurpose
+        get() = RoomPurpose.UTILITY
 }
 
 class SmallSquareUtilityRoom(

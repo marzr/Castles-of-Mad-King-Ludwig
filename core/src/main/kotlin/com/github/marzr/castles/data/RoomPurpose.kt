@@ -1,6 +1,6 @@
 package com.github.marzr.castles.data
 
-enum class RoomType {
+enum class RoomPurpose {
     LIVING,
     ACTIVITY,
     SLEEPING,

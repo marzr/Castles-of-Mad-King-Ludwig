@@ -1,11 +1,11 @@
 package com.github.marzr.castles.data.bonus
 
-import com.github.marzr.castles.data.RoomType
+import com.github.marzr.castles.data.RoomPurpose
 
 open class CenterBonus(
     open val points: Int,
     val wall: WallType,
-    open val roomTypes: List<RoomType>
+    open val roomPurposes: List<RoomPurpose>
 ) {
 
     enum class WallType {
@@ -16,16 +16,16 @@ open class CenterBonus(
 
     data class Door(
         override val points: Int,
-        override val roomTypes: List<RoomType>
-    ) : CenterBonus(points, WallType.DOOR, roomTypes)
+        override val roomPurposes: List<RoomPurpose>
+    ) : CenterBonus(points, WallType.DOOR, roomPurposes)
 
     data class Downstairs(
         override val points: Int,
-        val roomType: RoomType
-    ) : CenterBonus(points, WallType.NONE, listOf(roomType))
+        val roomPurpose: RoomPurpose
+    ) : CenterBonus(points, WallType.NONE, listOf(roomPurpose))
 
     data class Wall(
         override val points: Int,
-        override val roomTypes: List<RoomType>
-    ) : CenterBonus(points, WallType.WALL, roomTypes)
+        override val roomPurposes: List<RoomPurpose>
+    ) : CenterBonus(points, WallType.WALL, roomPurposes)
 }

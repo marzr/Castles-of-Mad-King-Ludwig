@@ -1,21 +1,21 @@
 package com.github.marzr.castles.data.bonus
 
 import com.github.marzr.castles.data.FigureType
-import com.github.marzr.castles.data.RoomType
+import com.github.marzr.castles.data.RoomPurpose
 
 interface KingsFavor {
 
     val id: String
 
-    data class RoomAreaKingsFavor(val roomType: RoomType, override val id: String) : KingsFavor {
+    data class RoomAreaKingsFavor(val roomPurpose: RoomPurpose, override val id: String) : KingsFavor {
         companion object {
-            fun list() = RoomType.values().map { RoomAreaKingsFavor(it, "RoomAreaKingsFavor_$it") }
+            fun list() = RoomPurpose.values().map { RoomAreaKingsFavor(it, "RoomAreaKingsFavor_$it") }
         }
     }
 
-    data class RoomCountKingsFavor(val roomType: RoomType, override val id: String) : KingsFavor {
+    data class RoomCountKingsFavor(val roomPurpose: RoomPurpose, override val id: String) : KingsFavor {
         companion object {
-            fun list() = RoomType.values().map { RoomCountKingsFavor(it, "RoomCountKingsFavor_$it") }
+            fun list() = RoomPurpose.values().map { RoomCountKingsFavor(it, "RoomCountKingsFavor_$it") }
         }
     }
 

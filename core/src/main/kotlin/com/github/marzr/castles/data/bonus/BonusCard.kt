@@ -1,33 +1,39 @@
 package com.github.marzr.castles.data.bonus
 
 import com.github.marzr.castles.data.FigureType
-import com.github.marzr.castles.data.RoomType
+import com.github.marzr.castles.data.RoomPurpose
 
 interface BonusCard {
 
+    val id: String
+
     companion object {
-        val allBonusCards = RoomBonusCard.listCards() + SizeBonusCard.listCards()
+        val allBonusCards = RoomPurposeBonusCard.listCards() + FigureTypeBonusCard.listCards()
     }
 
-    data class RoomBonusCard private constructor(val points: Int, val roomType: RoomType) : BonusCard {
+    data class RoomPurposeBonusCard private constructor(
+        val points: Int,
+        val roomPurpose: RoomPurpose,
+        override val id: String
+    ) : BonusCard {
 
         companion object {
-            private fun points(roomType: RoomType): Int = when (roomType) {
-                RoomType.LIVING -> 2
-                RoomType.ACTIVITY -> 2
-                RoomType.SLEEPING -> 3
-                RoomType.OUTDOOR -> 2
-                RoomType.UTILITY -> 2
-                RoomType.FOOD -> 3
-                RoomType.CORRIDOR -> 1
-                RoomType.DOWNSTAIRS -> 2
+            private fun points(roomPurpose: RoomPurpose): Int = when (roomPurpose) {
+                RoomPurpose.LIVING -> 2
+                RoomPurpose.ACTIVITY -> 2
+                RoomPurpose.SLEEPING -> 3
+                RoomPurpose.OUTDOOR -> 2
+                RoomPurpose.UTILITY -> 2
+                RoomPurpose.FOOD -> 3
+                RoomPurpose.CORRIDOR -> 1
+                RoomPurpose.DOWNSTAIRS -> 2
             }
 
-            fun listCards() = RoomType.values().map { RoomBonusCard(points(it), it) }
+            fun listCards() = RoomPurpose.values().map { RoomPurposeBonusCard(points(it), it, "RoomPurposeBonusCard_$it") }
         }
     }
 
-    data class SizeBonusCard(val points: Int, val figureType: FigureType) : BonusCard {
+    data class FigureTypeBonusCard(val points: Int, val figureType: FigureType, override val id: String) : BonusCard {
         companion object {
             private fun points(figureType: FigureType): Int = when (figureType) {
                 FigureType.BIG_CIRCLE -> 3
@@ -42,7 +48,7 @@ interface BonusCard {
                 FigureType.LARGE_OCTAGON -> 3
             }
 
-            fun listCards() = FigureType.values().map { SizeBonusCard(points(it), it) }
+            fun listCards() = FigureType.values().map { FigureTypeBonusCard(points(it), it, "FigureTypeBonusCard_$it") }
         }
     }
 }

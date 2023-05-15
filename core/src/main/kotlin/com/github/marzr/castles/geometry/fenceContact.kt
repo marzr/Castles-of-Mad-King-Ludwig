@@ -1,11 +1,11 @@
 package com.github.marzr.castles.geometry
 
-import com.github.marzr.castles.data.RoomType.OUTDOOR
+import com.github.marzr.castles.data.RoomPurpose.OUTDOOR
 import com.github.marzr.castles.data.rooms.OctagonRoom
 import com.github.marzr.castles.geometry.Position.Rotation.*
 
 fun PositionedTile.hasContactingFence(other: PositionedTile): Boolean {
-    if (this.tile.roomType != OUTDOOR)
+    if (this.tile.roomPurpose != OUTDOOR)
         return false
 
     val fence = this.top()

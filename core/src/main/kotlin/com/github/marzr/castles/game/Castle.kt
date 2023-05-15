@@ -1,7 +1,6 @@
 package com.github.marzr.castles.game
 
-import com.github.marzr.castles.data.RoomType
-import com.github.marzr.castles.data.rooms.OutdoorRoom
+import com.github.marzr.castles.data.RoomPurpose
 import com.github.marzr.castles.geometry.PositionedTile
 import com.github.marzr.castles.geometry.hasContactingFence
 import com.github.marzr.castles.geometry.intersects
@@ -42,7 +41,7 @@ sealed interface Violation {
     class Intersection(val tiles: List<PositionedTile>) : Violation
     class GardenFenceContact(outdoorTile: PositionedTile) : Violation {
         init {
-            if (outdoorTile.tile.roomType != RoomType.OUTDOOR)
+            if (outdoorTile.tile.roomPurpose != RoomPurpose.OUTDOOR)
                 throw IllegalStateException("tile must be outdoor")
         }
     }
