@@ -47,7 +47,15 @@ fun startServer(gameService: GameService) {
                 }
                 get("/game/{id}") {
                     val gameId = call.parameters["id"]?.toLongOrNull() ?: TODO("400")
-                    gameService.getGame(gameId)?.toDto() ?: TODO("404")
+                    val gameDto = gameService.getGame(gameId)?.toDto() ?: TODO("404")
+                    call.respond(gameDto)
+                }
+                get("/game/{id}/me") {
+                    val gameId = call.parameters["id"]?.toLongOrNull() ?: TODO("400")
+                    val game = gameService.getGame(gameId) ?: TODO("404")
+                    val currentUser = call.principal<UserIdPrincipal>()
+                    val player = game.players.get(currentUser!!.name).toDto()
+                    call.respond(player)
                 }
                 post("/game/{id}/buildRoom") {
                     val gameId = call.parameters["id"]
