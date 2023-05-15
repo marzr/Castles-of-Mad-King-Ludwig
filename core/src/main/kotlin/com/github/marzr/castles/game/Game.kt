@@ -6,7 +6,7 @@ import com.github.marzr.castles.data.rooms.allRooms
 import java.lang.IllegalStateException
 
 @ExperimentalStdlibApi
-class Game(playersCount: Int) {
+class Game(playersCount: Int, val id: Long) {
     private val roomsDeck = Deck(allRooms)
     private val bonusDeck = Deck(BonusCard.allBonusCards)
 
@@ -45,7 +45,7 @@ class Game(playersCount: Int) {
 
 @ExperimentalStdlibApi
 fun main() {
-    with(Game(4)) {
+    with(Game(4, 1)) {
         players.list.forEach {
             it.bonuses.addAll(it.bonusesToChoose.take(2))
             it.bonusesToChoose.clear()
