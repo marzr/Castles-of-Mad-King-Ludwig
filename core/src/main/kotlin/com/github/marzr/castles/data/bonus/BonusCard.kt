@@ -51,4 +51,40 @@ interface BonusCard {
             fun listCards() = FigureType.values().map { FigureTypeBonusCard(points(it), it, "FigureTypeBonusCard_$it") }
         }
     }
+
+    object UniqueSizeBonusCard : BonusCard {
+        override val id = "UniqueSizeBonusCard"
+    }
+
+    object GalleriesBonusCard : BonusCard {
+        override val id = "GalleriesBonusCard"
+    }
+
+    object ExternalEntrancesBonusCard : BonusCard {
+        override val id = "ExternalEntrancesBonusCard"
+    }
+
+    object SquareRoomsBonusCard : BonusCard {
+        override val id = "SquareRoomsBonusCard"
+    }
+
+    object MoneyBonusCard : BonusCard {
+        override val id = "MoneyBonusCard"
+    }
+
+    object UniqueTypeBonusCard : BonusCard {
+        override val id = "UniqueTypeBonusCard"
+    }
+
+    object StairsBonusCard : BonusCard {
+        override val id = "StairsBonusCard"
+    }
+
+    object CompletedRoomsBonusCard : BonusCard {
+        override val id = "CompletedRoomsBonusCard"
+    }
+
+    object CircularRoomsBonusCard : BonusCard {
+        override val id = "CircularRoomsBonusCard"
+    }
 }
