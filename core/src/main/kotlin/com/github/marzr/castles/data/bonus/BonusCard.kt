@@ -7,10 +7,6 @@ interface BonusCard {
 
     val id: String
 
-    companion object {
-        val allBonusCards = RoomPurposeBonusCard.listCards() + FigureTypeBonusCard.listCards()
-    }
-
     data class RoomPurposeBonusCard private constructor(
         val points: Int,
         val roomPurpose: RoomPurpose,
@@ -29,7 +25,8 @@ interface BonusCard {
                 RoomPurpose.DOWNSTAIRS -> 2
             }
 
-            fun listCards() = RoomPurpose.values().map { RoomPurposeBonusCard(points(it), it, "RoomPurposeBonusCard_$it") }
+            fun listCards() =
+                RoomPurpose.values().map { RoomPurposeBonusCard(points(it), it, "RoomPurposeBonusCard_$it") }
         }
     }
 
@@ -86,5 +83,12 @@ interface BonusCard {
 
     object CircularRoomsBonusCard : BonusCard {
         override val id = "CircularRoomsBonusCard"
+    }
+
+    companion object {
+        val allBonusCards = RoomPurposeBonusCard.listCards() + FigureTypeBonusCard.listCards() +
+                UniqueSizeBonusCard + GalleriesBonusCard + ExternalEntrancesBonusCard +
+                SquareRoomsBonusCard + MoneyBonusCard + UniqueTypeBonusCard +
+                StairsBonusCard + CompletedRoomsBonusCard + CircularRoomsBonusCard
     }
 }
