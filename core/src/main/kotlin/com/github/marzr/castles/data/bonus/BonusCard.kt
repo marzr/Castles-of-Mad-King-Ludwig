@@ -6,9 +6,10 @@ import com.github.marzr.castles.data.RoomPurpose
 interface BonusCard {
 
     val id: String
+    val points: Int
 
     data class RoomPurposeBonusCard private constructor(
-        val points: Int,
+        override val points: Int,
         val roomPurpose: RoomPurpose,
         override val id: String
     ) : BonusCard {
@@ -30,7 +31,8 @@ interface BonusCard {
         }
     }
 
-    data class FigureTypeBonusCard(val points: Int, val figureType: FigureType, override val id: String) : BonusCard {
+    data class FigureTypeBonusCard(override val points: Int, val figureType: FigureType, override val id: String) :
+        BonusCard {
         companion object {
             private fun points(figureType: FigureType): Int = when (figureType) {
                 FigureType.BIG_CIRCLE -> 3
@@ -51,38 +53,47 @@ interface BonusCard {
 
     object UniqueSizeBonusCard : BonusCard {
         override val id = "UniqueSizeBonusCard"
+        override val points = 8
     }
 
     object GalleriesBonusCard : BonusCard {
         override val id = "GalleriesBonusCard"
+        override val points = 1
     }
 
     object ExternalEntrancesBonusCard : BonusCard {
         override val id = "ExternalEntrancesBonusCard"
+        override val points = 1
     }
 
     object SquareRoomsBonusCard : BonusCard {
         override val id = "SquareRoomsBonusCard"
+        override val points = 1
     }
 
     object MoneyBonusCard : BonusCard {
         override val id = "MoneyBonusCard"
+        override val points = 1
     }
 
     object UniqueTypeBonusCard : BonusCard {
         override val id = "UniqueTypeBonusCard"
+        override val points = 7
     }
 
     object StairsBonusCard : BonusCard {
         override val id = "StairsBonusCard"
+        override val points = 2
     }
 
     object CompletedRoomsBonusCard : BonusCard {
         override val id = "CompletedRoomsBonusCard"
+        override val points = 1
     }
 
     object CircularRoomsBonusCard : BonusCard {
         override val id = "CircularRoomsBonusCard"
+        override val points = 1
     }
 
     companion object {
