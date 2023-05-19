@@ -1,10 +1,10 @@
 package com.github.marzr.castles.data
 
-interface Tile {
+sealed interface Tile {
     val roomPurpose: RoomPurpose
 }
 
-abstract class CorridorTile : Tile {
+sealed class CorridorTile : Tile {
     override val roomPurpose = RoomPurpose.CORRIDOR
 }
 
