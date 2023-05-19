@@ -51,8 +51,8 @@ interface BonusCard {
         }
     }
 
-    object UniqueSizeBonusCard : BonusCard {
-        override val id = "UniqueSizeBonusCard"
+    object AllFigureTypesBonusCard : BonusCard {
+        override val id = "AllFigureTypesBonusCard"
         override val points = 8
     }
 
@@ -76,8 +76,8 @@ interface BonusCard {
         override val points = 1
     }
 
-    object UniqueTypeBonusCard : BonusCard {
-        override val id = "UniqueTypeBonusCard"
+    object AllRoomPurposesBonusCard : BonusCard {
+        override val id = "AllRoomPurposesBonusCard"
         override val points = 7
     }
 
@@ -98,8 +98,8 @@ interface BonusCard {
 
     companion object {
         val allBonusCards = RoomPurposeBonusCard.listCards() + FigureTypeBonusCard.listCards() +
-                UniqueSizeBonusCard + GalleriesBonusCard + ExternalEntrancesBonusCard +
-                SquareRoomsBonusCard + MoneyBonusCard + UniqueTypeBonusCard +
+                AllFigureTypesBonusCard + GalleriesBonusCard + ExternalEntrancesBonusCard +
+                SquareRoomsBonusCard + MoneyBonusCard + AllRoomPurposesBonusCard +
                 StairsBonusCard + CompletedRoomsBonusCard + CircularRoomsBonusCard
     }
 }
