@@ -1,6 +1,7 @@
 package com.github.marzr.castles.geometry
 
-sealed interface DoorPosition {
-    data class Horizontal(val y: Int, val x: Int) : DoorPosition
-    data class Vertical(val x: Int, val y: Int) : DoorPosition
+data class DoorPosition(val x: Int, val y: Int, val rotation: DoorRotation)
+
+enum class DoorRotation {
+    HORIZONTAL, VERTICAL
 }
