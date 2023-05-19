@@ -6,13 +6,10 @@ import com.github.marzr.castles.data.RoomPurpose
 interface BonusCard {
 
     val id: String
-
-    companion object {
-        val allBonusCards = RoomPurposeBonusCard.listCards() + FigureTypeBonusCard.listCards()
-    }
+    val points: Int
 
     data class RoomPurposeBonusCard private constructor(
-        val points: Int,
+        override val points: Int,
         val roomPurpose: RoomPurpose,
         override val id: String
     ) : BonusCard {
@@ -29,11 +26,13 @@ interface BonusCard {
                 RoomPurpose.DOWNSTAIRS -> 2
             }
 
-            fun listCards() = RoomPurpose.values().map { RoomPurposeBonusCard(points(it), it, "RoomPurposeBonusCard_$it") }
+            fun listCards() =
+                RoomPurpose.values().map { RoomPurposeBonusCard(points(it), it, "RoomPurposeBonusCard_$it") }
         }
     }
 
-    data class FigureTypeBonusCard(val points: Int, val figureType: FigureType, override val id: String) : BonusCard {
+    data class FigureTypeBonusCard(override val points: Int, val figureType: FigureType, override val id: String) :
+        BonusCard {
         companion object {
             private fun points(figureType: FigureType): Int = when (figureType) {
                 FigureType.BIG_CIRCLE -> 3
@@ -50,5 +49,57 @@ interface BonusCard {
 
             fun listCards() = FigureType.values().map { FigureTypeBonusCard(points(it), it, "FigureTypeBonusCard_$it") }
         }
+    }
+
+    object AllFigureTypesBonusCard : BonusCard {
+        override val id = "AllFigureTypesBonusCard"
+        override val points = 8
+    }
+
+    object GalleriesBonusCard : BonusCard {
+        override val id = "GalleriesBonusCard"
+        override val points = 1
+    }
+
+    object ExternalEntrancesBonusCard : BonusCard {
+        override val id = "ExternalEntrancesBonusCard"
+        override val points = 1
+    }
+
+    object SquareRoomsBonusCard : BonusCard {
+        override val id = "SquareRoomsBonusCard"
+        override val points = 1
+    }
+
+    object MoneyBonusCard : BonusCard {
+        override val id = "MoneyBonusCard"
+        override val points = 1
+    }
+
+    object AllRoomPurposesBonusCard : BonusCard {
+        override val id = "AllRoomPurposesBonusCard"
+        override val points = 7
+    }
+
+    object StairsBonusCard : BonusCard {
+        override val id = "StairsBonusCard"
+        override val points = 2
+    }
+
+    object CompletedRoomsBonusCard : BonusCard {
+        override val id = "CompletedRoomsBonusCard"
+        override val points = 1
+    }
+
+    object CircularRoomsBonusCard : BonusCard {
+        override val id = "CircularRoomsBonusCard"
+        override val points = 1
+    }
+
+    companion object {
+        val allBonusCards = RoomPurposeBonusCard.listCards() + FigureTypeBonusCard.listCards() +
+                AllFigureTypesBonusCard + GalleriesBonusCard + ExternalEntrancesBonusCard +
+                SquareRoomsBonusCard + MoneyBonusCard + AllRoomPurposesBonusCard +
+                StairsBonusCard + CompletedRoomsBonusCard + CircularRoomsBonusCard
     }
 }
