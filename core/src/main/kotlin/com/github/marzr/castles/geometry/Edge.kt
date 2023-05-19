@@ -3,7 +3,6 @@ package com.github.marzr.castles.geometry
 sealed interface Edge
 data class Horizontal(val y: Int, val x1: Int, val x2: Int) : Edge
 data class Vertical(val x: Int, val y1: Int, val y2: Int) : Edge
-data class Two(val edge1: Edge, val edge2: Edge) : Edge
 
 fun PositionedTile.top(): Edge = when (val f = this.toFigure()) {
     is Circle -> f.top()
@@ -39,8 +38,8 @@ fun Circle.top() = when (position.rotation) {
 
 fun Rectangle.top() = when (position.rotation) {
     Position.Rotation.R0 -> Horizontal(y = position.y, x1 = position.x, x2 = position.x + width)
-    Position.Rotation.R90 -> Vertical(x = position.x + width, y1 = position.y, y2 = position.y - height)
-    Position.Rotation.R180 -> Horizontal(y = position.y - width, x1 = position.x + width, x2 = position.x)
+    Position.Rotation.R90 -> Vertical(x = position.x + width, y1 = position.y - height, y2 = position.y)
+    Position.Rotation.R180 -> Horizontal(y = position.y - width, x1 = position.x, x2 = position.x + width)
     Position.Rotation.R270 -> Vertical(x = position.x, y1 = position.y - width, y2 = position.y)
 }
 
@@ -55,7 +54,6 @@ fun PositionedTile.edges() = when (val f = this.toFigure()) {
     is Circle -> f.edges()
     is Octagon -> f.edges()
     is Rectangle -> f.edges()
-    else -> TODO()
 }
 
 fun Circle.edges() = Position.Rotation.values().map {
@@ -89,16 +87,9 @@ fun Octagon.edges() =
         )
     } else {
         listOf(
-            Horizontal(y = position.y, x1 = position.x + height - 1, x2 = position.x + 1),
+            Horizontal(y = position.y, x1 = position.x + 1, x2 = position.x + height - 1),
             Vertical(x = position.x, y1 = position.y - width + 1, y2 = position.y - 1),
-            Horizontal(y = position.y - width, x1 = position.x + height - 1, x2 = position.x + 1),
+            Horizontal(y = position.y - width, x1 = position.x + 1, x2 = position.x + height - 1),
             Vertical(x = position.x + height, y1 = position.y - width + 1, y2 = position.y - 1)
         )
     }
-
-fun List<Edge>.flat() = this.flatMap {
-    when (it) {
-        is Two -> listOf(it.edge1, it.edge2)
-        else -> listOf(it)
-    }
-}

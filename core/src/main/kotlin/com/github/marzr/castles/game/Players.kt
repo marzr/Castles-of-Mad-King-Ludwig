@@ -16,7 +16,7 @@ class Players(private val count: Int) {
     }
 
     //TODO remove
-    private val map = mapOf("p1" to list[0], "p2" to list[1], "p3" to list[2], "p4" to list[3])
+    private val map = list.mapIndexed { i, player -> ("p${i + 1}" to player) }.toMap()
 
     fun get(userName: String) = map[userName]!!
 

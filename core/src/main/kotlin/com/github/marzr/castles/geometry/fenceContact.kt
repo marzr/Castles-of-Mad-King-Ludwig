@@ -9,12 +9,17 @@ fun PositionedTile.hasContactingFence(other: PositionedTile): Boolean {
 
     val fence = this.top()
 
-    if (fence is Vertical) {
-        other.edges().flat().filterIsInstance<Vertical>()
+    val fenceSegment = when (fence) {
+        is Vertical -> Segment(fence.y1, fence.y2)
+        is Horizontal ->  Segment(fence.x1, fence.x2)
     }
 
-    if (fence is Horizontal) {
-        other.edges().flat().filterIsInstance<Vertical>()
+    when (fence) {
+        is Vertical -> other.edges().filterIsInstance<Vertical>().map { Segment(it.y1, it.y1) }
+        is Horizontal -> other.edges().filterIsInstance<Horizontal>().map { Segment(it.x1, it.x2) }
+    }.forEach {
+        if (it intersects fenceSegment)
+            return true
     }
     if (this.tile is OctagonRoom && other.tile is OctagonRoom)
         TODO()
