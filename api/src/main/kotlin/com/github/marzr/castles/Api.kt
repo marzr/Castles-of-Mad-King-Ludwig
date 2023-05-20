@@ -3,7 +3,8 @@ package com.github.marzr.castles
 import com.github.marzr.castles.dto.*
 import com.github.marzr.castles.dto.ErrorCode.GAME_ID_REQUIRED
 import com.github.marzr.castles.dto.ErrorCode.GAME_NOT_FOUND
-import com.github.marzr.castles.game.GameService
+import com.github.marzr.castles.service.GameService
+import com.github.marzr.castles.service.PreGameService
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.NotFound
 import io.ktor.serialization.kotlinx.json.*
@@ -18,7 +19,10 @@ import io.ktor.server.routing.*
 import io.ktor.util.pipeline.*
 
 @OptIn(ExperimentalStdlibApi::class)
-fun startServer(gameService: GameService) {
+fun startServer(
+    gameService: GameService,
+    preGameService: PreGameService
+) {
     embeddedServer(Netty, port = 8000) {
         install(ContentNegotiation) {
             json()
@@ -42,6 +46,10 @@ fun startServer(gameService: GameService) {
             authenticate("auth-basic") {
                 get("/") {
                     call.respondText("Hello, world!")
+                }
+                post("/preGame") {
+                    val preGame = preGameService.create().toDto()
+                    call.respond(preGame)
                 }
                 post("/game") {
                     val gameSettings = call.receive<GameSettingsDto>()
