@@ -1,7 +1,7 @@
 package com.github.marzr.castles.geometry
 
 import com.github.marzr.castles.data.*
-import com.github.marzr.castles.data.rooms.RoomTile
+import com.github.marzr.castles.data.RoomTile
 
 sealed interface Figure
 
@@ -18,6 +18,7 @@ fun PositionedTile.toFigure(): Figure = when (val tile = this.tile) {
     is Foyer -> Octagon(3, 3, position)
     is Stairs -> Rectangle(3, 1, position)
     is Hallway -> TODO()
+    else -> TODO()
 }
 
 fun RoomTile.toFigure(position: Position): Figure = when (this.figureType) {

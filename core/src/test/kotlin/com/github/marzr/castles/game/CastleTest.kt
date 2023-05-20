@@ -1,7 +1,7 @@
 package com.github.marzr.castles.game
 
 import com.github.marzr.castles.data.Foyer
-import com.github.marzr.castles.data.rooms.roomsByTitle
+import com.github.marzr.castles.data.roomsByTitle
 import com.github.marzr.castles.geometry.Position
 import com.github.marzr.castles.geometry.PositionedTile
 import org.junit.jupiter.api.Assertions.assertEquals

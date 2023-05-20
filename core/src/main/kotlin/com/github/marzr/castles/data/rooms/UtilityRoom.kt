@@ -1,5 +1,6 @@
 package com.github.marzr.castles.data.rooms
 
+import com.github.marzr.castles.data.RoomTile
 import com.github.marzr.castles.data.RoomPurpose
 
 interface UtilityRoom : RoomTile {

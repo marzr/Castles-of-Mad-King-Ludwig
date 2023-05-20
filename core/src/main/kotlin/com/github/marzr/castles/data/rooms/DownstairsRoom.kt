@@ -1,5 +1,7 @@
 package com.github.marzr.castles.data.rooms
 
+import com.github.marzr.castles.data.CenterBonusTile
+import com.github.marzr.castles.data.RoomTile
 import com.github.marzr.castles.data.bonus.CenterBonus
 import com.github.marzr.castles.data.RoomPurpose
 
