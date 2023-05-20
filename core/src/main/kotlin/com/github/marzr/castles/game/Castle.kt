@@ -7,19 +7,19 @@ import com.github.marzr.castles.geometry.intersects
 
 sealed class TileAddResult {
     data class Success(val reward: InstantReward) : TileAddResult()
-    object Fail : TileAddResult()
+    data class Fail(val violations: List<Violation>) : TileAddResult()
 }
 
 class Castle {
     private val tiles = mutableListOf<PositionedTile>()
 
     fun addTile(positionedTile: PositionedTile): TileAddResult {
-
-        return if (tileAddViolations(positionedTile).isEmpty()) {
+        val violations=tileAddViolations(positionedTile)
+        return if (violations.isEmpty()) {
             tiles.add(positionedTile)
 
             TileAddResult.Success(InstantReward(0))
-        } else TileAddResult.Fail
+        } else TileAddResult.Fail(violations)
     }
 
     private fun tileAddViolations(tile: PositionedTile): List<Violation> {
@@ -38,8 +38,11 @@ class Castle {
 }
 
 sealed interface Violation {
-    class Intersection(val tiles: List<PositionedTile>) : Violation
-    class GardenFenceContact(outdoorTile: PositionedTile) : Violation {
+    class Intersection(val tiles: List<PositionedTile>) : Violation {
+        override fun toString(): String = tiles.joinToString { "${it.tile.title}, ${it.position}" }
+            .let { "Intersection[$it]" }
+    }
+    class GardenFenceContact(val outdoorTile: PositionedTile) : Violation {
         init {
             if (outdoorTile.tile.roomPurpose != RoomPurpose.OUTDOOR)
                 throw IllegalStateException("tile must be outdoor")

@@ -15,8 +15,8 @@ fun PositionedTile.hasContactingFence(other: PositionedTile): Boolean {
     }
 
     when (fence) {
-        is Vertical -> other.edges().filterIsInstance<Vertical>().map { Segment(it.y1, it.y1) }
-        is Horizontal -> other.edges().filterIsInstance<Horizontal>().map { Segment(it.x1, it.x2) }
+        is Vertical -> other.edges().filterIsInstance<Vertical>().filter { it.x == fence.x }.map { Segment(it.y1, it.y1) }
+        is Horizontal -> other.edges().filterIsInstance<Horizontal>().filter { it.y == fence.y }.map { Segment(it.x1, it.x2) }
     }.forEach {
         if (it intersects fenceSegment)
             return true
