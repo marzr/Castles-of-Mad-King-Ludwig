@@ -1,6 +1,6 @@
 package com.github.marzr.castles.geometry
 
-import com.github.marzr.castles.data.rooms.roomsByTitle
+import com.github.marzr.castles.data.roomsByTitle
 import com.github.marzr.castles.geometry.Position.Rotation.R0
 import com.github.marzr.castles.geometry.Position.Rotation.R180
 import org.junit.jupiter.api.Assertions.assertFalse

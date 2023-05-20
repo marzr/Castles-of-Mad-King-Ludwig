@@ -2,7 +2,7 @@ package com.github.marzr.castles.game
 
 import com.github.marzr.castles.data.bonus.BonusCard
 import com.github.marzr.castles.data.bonus.KingsFavor
-import com.github.marzr.castles.data.rooms.allRooms
+import com.github.marzr.castles.data.allRooms
 import java.lang.IllegalStateException
 
 @ExperimentalStdlibApi

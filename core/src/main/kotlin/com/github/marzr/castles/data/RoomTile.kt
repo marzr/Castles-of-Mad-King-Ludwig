@@ -1,8 +1,7 @@
-package com.github.marzr.castles.data.rooms
+package com.github.marzr.castles.data
 
 import com.github.marzr.castles.data.bonus.CenterBonus
-import com.github.marzr.castles.data.FigureType
-import com.github.marzr.castles.data.Tile
+import com.github.marzr.castles.data.rooms.*
 
 interface RoomTile : Tile {
     val title: String

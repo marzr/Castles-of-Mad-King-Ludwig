@@ -1,6 +1,6 @@
 package com.github.marzr.castles.game
 
-import com.github.marzr.castles.data.rooms.RoomTile
+import com.github.marzr.castles.data.RoomTile
 import java.lang.IllegalStateException
 
 class Market(playersCount: Int) {
