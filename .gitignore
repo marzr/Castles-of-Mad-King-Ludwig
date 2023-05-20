@@ -3,3 +3,4 @@
 graphics/build
 core/build
 api/build
+db/build

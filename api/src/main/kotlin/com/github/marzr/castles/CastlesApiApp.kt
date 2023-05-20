@@ -5,4 +5,3 @@ import com.github.marzr.castles.game.GameService
 fun main() {
     startServer(GameService())
 }
-

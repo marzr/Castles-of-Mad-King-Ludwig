@@ -2,3 +2,4 @@ rootProject.name = "castles"
 include("core")
 include("graphics")
 include("api")
+include("db")
