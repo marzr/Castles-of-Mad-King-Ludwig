@@ -7,8 +7,11 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 class GameDao {
 
-    fun create(): GameEntity = transaction {
+    fun create(remainingStairs: Int, remainingHallways: Int): GameEntity = transaction {
         addLogger(StdOutSqlLogger)
-        GameEntity.new {}
+        GameEntity.new {
+            this.remainingStairs = remainingStairs
+            this.remainingHallways = remainingHallways
+        }
     }
 }

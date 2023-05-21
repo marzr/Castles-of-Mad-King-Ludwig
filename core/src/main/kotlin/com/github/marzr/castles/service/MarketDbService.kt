@@ -38,4 +38,16 @@ class MarketDbService(
             market.tiles[Market.Price.PRICE_15000]?.first?.title,
         )
     }
+
+    fun removeTile(gameId: Long, price: Market.Price) {
+        when (price) {
+            Market.Price.PRICE_1000 -> marketDao.removePrice1000(gameId)
+            Market.Price.PRICE_2000 -> marketDao.removePrice2000(gameId)
+            Market.Price.PRICE_4000 -> marketDao.removePrice4000(gameId)
+            Market.Price.PRICE_6000 -> marketDao.removePrice6000(gameId)
+            Market.Price.PRICE_8000 -> marketDao.removePrice8000(gameId)
+            Market.Price.PRICE_10000 -> marketDao.removePrice10000(gameId)
+            Market.Price.PRICE_15000 -> marketDao.removePrice15000(gameId)
+        }
+    }
 }

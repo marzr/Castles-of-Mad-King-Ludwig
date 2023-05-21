@@ -18,6 +18,7 @@ class PlayerDao {
             this.name = name
             this.money = money
             game = EntityID(gameId, Games)
+            this.color = color
         }
     }
 
