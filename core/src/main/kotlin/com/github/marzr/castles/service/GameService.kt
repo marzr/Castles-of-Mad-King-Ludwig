@@ -43,6 +43,15 @@ class GameService(
 
     fun getGame(id: Long): Game? = games[id]
 
+    fun nextTurn(game: Game) {
+        game.checkBonusesChosen()
+
+        game.market.fullfill(game.roomsDeck)
+        marketDbService.persistFullfill(game.id, game.market)
+
+        game.players.nextTurn()// TODO persist
+    }
+
     fun makeTurnGetMoney(gameId: Long, player: Player): Player {
         player.money = player.money + MONEY_TO_RECEIVE_WHEN_PASS_TURN
         playerDbService.plusMoney(player.name, gameId, MONEY_TO_RECEIVE_WHEN_PASS_TURN)

@@ -2,7 +2,9 @@ package com.github.marzr.castles.dao
 
 import com.github.marzr.castles.entity.MarketEntity
 import com.github.marzr.castles.table.Games
+import com.github.marzr.castles.table.Markets
 import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -44,6 +46,35 @@ class MarketDao {
             this.price8000Discount = price8000Discount
             this.price10000Discount = price10000Discount
             this.price15000Discount = price15000Discount
+        }
+    }
+
+    fun persistFullfill(
+        gameId: Long,
+        price1000: String?,
+        price2000: String?,
+        price4000: String?,
+        price6000: String?,
+        price8000: String?,
+        price10000: String?,
+        price15000: String?,
+    ) = transaction {
+        with(MarketEntity.find(Markets.game eq gameId).first()) {
+            this.price1000?.let { price1000Discount += 1000 }
+            this.price2000?.let { price2000Discount += 1000 }
+            this.price4000?.let { price4000Discount += 1000 }
+            this.price6000?.let { price6000Discount += 1000 }
+            this.price8000?.let { price8000Discount += 1000 }
+            this.price10000?.let { price10000Discount += 1000 }
+            this.price15000?.let { price15000Discount += 1000 }
+
+            this.price1000 = price1000
+            this.price2000 = price2000
+            this.price4000 = price4000
+            this.price6000 = price6000
+            this.price8000 = price8000
+            this.price10000 = price10000
+            this.price15000 = price15000
         }
     }
 }

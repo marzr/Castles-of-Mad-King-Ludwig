@@ -25,4 +25,17 @@ class MarketDbService(
             market.tiles[Market.Price.PRICE_15000]?.second ?: 0,
         )
     }
+
+    fun persistFullfill(gameId: Long, market: Market) {
+        marketDao.persistFullfill(
+            gameId,
+            market.tiles[Market.Price.PRICE_1000]?.first?.title,
+            market.tiles[Market.Price.PRICE_2000]?.first?.title,
+            market.tiles[Market.Price.PRICE_4000]?.first?.title,
+            market.tiles[Market.Price.PRICE_6000]?.first?.title,
+            market.tiles[Market.Price.PRICE_8000]?.first?.title,
+            market.tiles[Market.Price.PRICE_10000]?.first?.title,
+            market.tiles[Market.Price.PRICE_15000]?.first?.title,
+        )
+    }
 }

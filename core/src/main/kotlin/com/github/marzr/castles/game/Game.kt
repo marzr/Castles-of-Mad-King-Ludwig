@@ -20,14 +20,8 @@ class Game(
         checkBonusesChosen()
     }
 
-    private fun checkBonusesChosen() {
+    fun checkBonusesChosen() {
         if (players.list.find { it.bonusesToChoose.isNotEmpty() } != null)
             throw IllegalStateException("Players should choose bonus cards")
-    }
-
-    fun nextTurn() {
-        checkBonusesChosen()
-        market.fullfill(roomsDeck) // TODO move to service and persist
-        players.nextTurn()// TODO move to service and persist
     }
 }
