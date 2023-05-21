@@ -5,8 +5,8 @@ import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 
-class Game(id: EntityID<Long>) : LongEntity(id) {
-    companion object : LongEntityClass<Game>(Games)
+class GameEntity(id: EntityID<Long>) : LongEntity(id) {
+    companion object : LongEntityClass<GameEntity>(Games)
 
     var playersCount by Games.playersCount
 }

@@ -7,8 +7,11 @@ import com.github.marzr.castles.dto.GameSettingsDto
 import com.github.marzr.castles.dto.PositionedTileDto
 import com.github.marzr.castles.dto.toDto
 import com.github.marzr.castles.game.GameService
+import com.github.marzr.castles.service.GameService
+import com.github.marzr.castles.service.PreGameService
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.NotFound
+import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -21,7 +24,10 @@ import io.ktor.server.routing.*
 import io.ktor.util.pipeline.*
 
 @OptIn(ExperimentalStdlibApi::class)
-fun startServer(gameService: GameService) {
+fun startServer(
+    gameService: GameService,
+    preGameService: PreGameService
+) {
     embeddedServer(Netty, port = 8000) {
         install(ContentNegotiation) {
             json()
@@ -45,6 +51,17 @@ fun startServer(gameService: GameService) {
             authenticate("auth-basic") {
                 get("/") {
                     call.respondText("Hello, world!")
+                }
+                post("/preGame") {
+                    val currentUser = call.principal<UserIdPrincipal>()!!.name
+                    val preGame = preGameService.create(currentUser).toDto()
+                    call.respond(preGame)
+                }
+                post("/preGame/{id}/join") {
+                    val preGameId = call.parameters["id"]?.toLongOrNull() ?: TODO("400")
+                    val currentUser = call.principal<UserIdPrincipal>()!!.name
+                    val preGame = preGameService.join(currentUser, preGameId).toDto()
+                    call.respond(preGame)
                 }
                 post("/game") {
                     val gameSettings = call.receive<GameSettingsDto>()

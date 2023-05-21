@@ -1,7 +1,11 @@
 package com.github.marzr.castles
 
-import com.github.marzr.castles.game.GameService
+import com.github.marzr.castles.dao.JoinedUsersDao
+import com.github.marzr.castles.dao.PreGameDao
+import com.github.marzr.castles.service.GameService
+import com.github.marzr.castles.service.PreGameService
 
 fun main() {
-    startServer(GameService())
+    Database().initDatabase
+    startServer(GameService(), PreGameService(PreGameDao(), JoinedUsersDao()))
 }
