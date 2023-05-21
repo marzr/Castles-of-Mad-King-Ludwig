@@ -14,4 +14,9 @@ class GameService {
     }
 
     fun getGame(id: Long): Game? = games[id]
+
+    fun getPlayerMoney(player: Player): Player {
+        player.money = player.money + 5000
+        return player
+    }
 }

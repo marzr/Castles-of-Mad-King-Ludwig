@@ -1,8 +1,11 @@
 package com.github.marzr.castles
 
-import com.github.marzr.castles.dto.*
 import com.github.marzr.castles.dto.ErrorCode.GAME_ID_REQUIRED
 import com.github.marzr.castles.dto.ErrorCode.GAME_NOT_FOUND
+import com.github.marzr.castles.dto.ErrorDto
+import com.github.marzr.castles.dto.GameSettingsDto
+import com.github.marzr.castles.dto.PositionedTileDto
+import com.github.marzr.castles.dto.toDto
 import com.github.marzr.castles.game.GameService
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.NotFound
@@ -64,6 +67,14 @@ fun startServer(gameService: GameService) {
                     val gameId = call.parameters["id"]
                     val tile = call.receive<PositionedTileDto>()
                     call.respondText("Hello, Tile $tile")
+                }
+                get("/game/{id}/getMoney") {
+                    val gameId = call.parameters["id"]?.toLongOrNull() ?: return@get gameIdRequired()
+                    val game = gameService.getGame(gameId) ?: return@get gameNotFound()
+                    val currentUser = call.principal<UserIdPrincipal>()
+                    val player = game.players.get(currentUser!!.name)
+                    val playerGetMoney = gameService.getPlayerMoney(player).toDto()
+                    call.respond(playerGetMoney)
                 }
             }
         }
