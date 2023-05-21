@@ -6,12 +6,10 @@ import com.github.marzr.castles.dto.ErrorDto
 import com.github.marzr.castles.dto.GameSettingsDto
 import com.github.marzr.castles.dto.PositionedTileDto
 import com.github.marzr.castles.dto.toDto
-import com.github.marzr.castles.game.GameService
 import com.github.marzr.castles.service.GameService
 import com.github.marzr.castles.service.PreGameService
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.NotFound
-import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
