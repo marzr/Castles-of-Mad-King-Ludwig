@@ -13,7 +13,8 @@ fun main() {
             GameDao(),
             JoinedUserDao(),
             PlayerDbService(PlayerDao(), BonusCardDao()),
-            MarketDbService(MarketDao())
+            MarketDbService(MarketDao()),
+            KingFavorDao(),
         ),
         PreGameDbService(PreGameDao(), JoinedUserDao())
     )
