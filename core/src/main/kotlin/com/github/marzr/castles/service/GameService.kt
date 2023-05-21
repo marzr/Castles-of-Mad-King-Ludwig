@@ -1,7 +1,10 @@
 package com.github.marzr.castles.service
 
 import com.github.marzr.castles.game.Game
+import com.github.marzr.castles.game.Player
 import java.util.concurrent.atomic.AtomicLong
+
+private const val MONEY_TO_RECEIVE_WHEN_PASS_TURN = 5000
 
 @OptIn(ExperimentalStdlibApi::class)
 class GameService {
@@ -15,4 +18,9 @@ class GameService {
     }
 
     fun getGame(id: Long): Game? = games[id]
+
+    fun makeTurnGetMoney(player: Player): Player {
+        player.money = player.money + MONEY_TO_RECEIVE_WHEN_PASS_TURN
+        return player
+    }
 }

@@ -7,7 +7,6 @@ import com.github.marzr.castles.service.GameService
 import com.github.marzr.castles.service.PreGameService
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.NotFound
-import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -80,6 +79,14 @@ fun startServer(
                     val gameId = call.parameters["id"]
                     val tile = call.receive<PositionedTileDto>()
                     call.respondText("Hello, Tile $tile")
+                }
+                get("/game/{id}/getMoney") {
+                    val gameId = call.parameters["id"]?.toLongOrNull() ?: return@get gameIdRequired()
+                    val game = gameService.getGame(gameId) ?: return@get gameNotFound()
+                    val currentUser = call.principal<UserIdPrincipal>()
+                    val player = game.players.get(currentUser!!.name)
+                    val playerMoney = PlayerMoneyDto(gameService.makeTurnGetMoney(player).money)
+                    call.respond(playerMoney)
                 }
             }
         }
