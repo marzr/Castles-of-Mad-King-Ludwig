@@ -7,4 +7,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 
 class GameEntity(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<GameEntity>(Games)
+
+    var remainingHallways by Games.remainingHallways
+    var remainingStairs by Games.remainingStairs
 }

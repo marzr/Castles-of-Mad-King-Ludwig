@@ -59,6 +59,7 @@ class MarketDao {
         price10000: String?,
         price15000: String?,
     ) = transaction {
+        addLogger(StdOutSqlLogger)
         with(MarketEntity.find(Markets.game eq gameId).first()) {
             this.price1000?.let { price1000Discount += 1000 }
             this.price2000?.let { price2000Discount += 1000 }
@@ -75,6 +76,62 @@ class MarketDao {
             this.price8000 = price8000
             this.price10000 = price10000
             this.price15000 = price15000
+        }
+    }
+
+    fun removePrice1000(gameId: Long) = transaction {
+        addLogger(StdOutSqlLogger)
+        with(MarketEntity.find(Markets.game eq gameId).first()) {
+            price1000 = null
+            price1000Discount = 0
+        }
+    }
+
+    fun removePrice2000(gameId: Long) = transaction {
+        addLogger(StdOutSqlLogger)
+        with(MarketEntity.find(Markets.game eq gameId).first()) {
+            price2000 = null
+            price2000Discount = 0
+        }
+    }
+
+    fun removePrice4000(gameId: Long) = transaction {
+        addLogger(StdOutSqlLogger)
+        with(MarketEntity.find(Markets.game eq gameId).first()) {
+            price4000 = null
+            price4000Discount = 0
+        }
+    }
+
+    fun removePrice6000(gameId: Long) = transaction {
+        addLogger(StdOutSqlLogger)
+        with(MarketEntity.find(Markets.game eq gameId).first()) {
+            price6000 = null
+            price6000Discount = 0
+        }
+    }
+
+    fun removePrice8000(gameId: Long) = transaction {
+        addLogger(StdOutSqlLogger)
+        with(MarketEntity.find(Markets.game eq gameId).first()) {
+            price8000 = null
+            price8000Discount = 0
+        }
+    }
+
+    fun removePrice10000(gameId: Long) = transaction {
+        addLogger(StdOutSqlLogger)
+        with(MarketEntity.find(Markets.game eq gameId).first()) {
+            price10000 = null
+            price10000Discount = 0
+        }
+    }
+
+    fun removePrice15000(gameId: Long) = transaction {
+        addLogger(StdOutSqlLogger)
+        with(MarketEntity.find(Markets.game eq gameId).first()) {
+            price15000 = null
+            price15000Discount = 0
         }
     }
 }

@@ -3,8 +3,11 @@ package com.github.marzr.castles.service
 import com.github.marzr.castles.dao.GameDao
 import com.github.marzr.castles.dao.JoinedUserDao
 import com.github.marzr.castles.dao.KingFavorDao
+import com.github.marzr.castles.data.RoomTile
 import com.github.marzr.castles.game.Game
+import com.github.marzr.castles.game.Market
 import com.github.marzr.castles.game.Player
+import java.lang.IllegalStateException
 
 private const val MONEY_TO_RECEIVE_WHEN_PASS_TURN = 5000
 
@@ -17,11 +20,19 @@ class GameService(
     private val kingFavorDao: KingFavorDao
 ) {
 
+    companion object {
+        const val STAIRS_PRICE = 3000
+        const val HALLWAY_PRICE = 3000
+    }
+
     private val games: MutableMap<Long, Game> = mutableMapOf()
 
     fun createGame(preGameId: Long): Game {
         val users = joinedUserDao.getJoinedUsers(preGameId)
-        val id = gameDao.create().id.value
+        val id = gameDao.create(
+            remainingStairs = Game.STAIRS_COUNT[users.size]!!,
+            remainingHallways = Game.HALLWAY_COUNT[users.size]!!
+        ).id.value
         return Game(users, id).also { game ->
             // TODO persist decks
 
@@ -56,5 +67,46 @@ class GameService(
         player.money = player.money + MONEY_TO_RECEIVE_WHEN_PASS_TURN
         playerDbService.plusMoney(player.name, gameId, MONEY_TO_RECEIVE_WHEN_PASS_TURN)
         return player
+    }
+
+    fun buyTile(game: Game, buyer: Player, seller: Player, price: Market.Price): RoomTile {
+        val (room, discount) = game.market.tilesMap[price] ?: throw IllegalStateException("$buyer wants buy null")
+        game.market.tilesMap[price] = null
+        marketDbService.removeTile(game.id, price)
+
+        buyer.money -= price.amount
+        playerDbService.minusMoney(buyer.name, game.id, price.amount)
+
+        if (buyer.money < 0) throw IllegalStateException("$buyer money < 0")
+        buyer.money += discount
+        playerDbService.plusMoney(buyer.name, game.id, discount)
+
+        if (buyer != seller) {
+            seller.money += price.amount
+            playerDbService.plusMoney(seller.name, game.id, price.amount)
+        }
+        return room
+    }
+
+    fun buyStairs(game: Game, buyer: Player, seller: Player) {
+        buyer.money -= STAIRS_PRICE
+        playerDbService.minusMoney(buyer.name, game.id, STAIRS_PRICE)
+
+        if (buyer != seller) {
+            seller.money += STAIRS_PRICE
+            playerDbService.plusMoney(seller.name, game.id, STAIRS_PRICE)
+        }
+        game.remainingStairs -= 1
+    }
+
+    fun buyHallway(game: Game, buyer: Player, seller: Player) {
+        buyer.money -= HALLWAY_PRICE
+        playerDbService.minusMoney(buyer.name, game.id, HALLWAY_PRICE)
+
+        if (buyer != seller) {
+            seller.money += HALLWAY_PRICE
+            playerDbService.plusMoney(seller.name, game.id, HALLWAY_PRICE)
+        }
+        game.remainingHallways -= 1
     }
 }

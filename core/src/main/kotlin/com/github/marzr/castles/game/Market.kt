@@ -5,7 +5,7 @@ import java.lang.IllegalStateException
 
 class Market(playersCount: Int) {
     private val size = playersCount + 3
-    private var tilesMap: MutableMap<Price, Pair<RoomTile, Int>?> =
+    var tilesMap: MutableMap<Price, Pair<RoomTile, Int>?> =
         Price.values().takeLast(size).associateWith { null }.toMutableMap()
 
     val tiles get() = tilesMap as Map<Price, Pair<RoomTile, Int>?>
@@ -25,17 +25,6 @@ class Market(playersCount: Int) {
                 tilesMap[price] = newRooms.removeLast() to 0
             }
         }
-    }
-
-    fun buy(buyer: Player, seller: Player, price: Price): RoomTile {
-        val (room, discount) = tilesMap[price] ?: throw IllegalStateException("$buyer wants buy null")
-        buyer.money -= price.amount
-        if (buyer.money < 0) throw IllegalStateException("$buyer money < 0")
-        buyer.money += discount
-
-        if (buyer != seller)
-            seller.money += price.amount
-        return room
     }
 
     override fun toString(): String {

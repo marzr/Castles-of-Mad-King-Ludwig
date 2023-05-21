@@ -37,8 +37,8 @@ class GameTest : DbTest {
             startGame()
 
             val buyer = players.currentBuyer()
-            market.buy(buyer, players.builder(), Market.Price.PRICE_4000)
-            market.buy(players.builder(), players.builder(), Market.Price.PRICE_6000)
+            gameService.buyTile(this, buyer, players.builder(), Market.Price.PRICE_4000)
+            gameService.buyTile(this, players.builder(), players.builder(), Market.Price.PRICE_6000)
             gameService.nextTurn(this)
         }
     }

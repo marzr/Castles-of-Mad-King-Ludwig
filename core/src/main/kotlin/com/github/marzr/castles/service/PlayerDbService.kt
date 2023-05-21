@@ -27,4 +27,7 @@ class PlayerDbService(
 
     fun plusMoney(name: String, gameId: Long, amount: Int): Int =
         playerDao.plusMoney(gameId, name, amount)
+
+    fun minusMoney(name: String, gameId: Long, amount: Int): Int =
+        playerDao.minusMoney(gameId, name, amount)
 }
