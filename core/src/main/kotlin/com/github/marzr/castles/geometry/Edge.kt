@@ -6,6 +6,9 @@ sealed interface Edge
 data class Horizontal(val y: Int, val x1: Int, val x2: Int) : Edge
 data class Vertical(val x: Int, val y1: Int, val y2: Int) : Edge
 
+// координаты берутся по часовой стрелке
+data class OcatagonDiagonalEdge(val x1: Int, val y1: Int, val x2: Int, val y2: Int)
+
 fun PositionedTile.top(): Edge = when (val f = this.toFigure()) {
     is Circle -> f.top()
     is Rectangle -> f.top()
@@ -29,7 +32,7 @@ fun Rectangle.top() = when (position.rotation) {
 
 fun Octagon.top() = when (position.rotation) {
     R0 -> Horizontal(y = position.y, x1 = position.x + 1, x2 = position.x + width - 1)
-    R90 -> Vertical(x = position.x + width, y1 = position.y - 1, y2 = position.y - height + 1)
+    R90 -> Vertical(x = position.x + height, y1 = position.y - height + 1, y2 = position.y - 1)
     R180 -> Horizontal(y = position.y - width, x1 = position.x + width - 1, x2 = position.x + 1)
     R270 -> Vertical(x = position.x, y1 = position.y - width + 1, y2 = position.y - 1)
 }
@@ -77,15 +80,50 @@ fun Octagon.edges() = with(position) {
     )
 }
 
+fun Octagon.diagonalEdges(): List<OcatagonDiagonalEdge> = with(position) {
+    if (rotation == R0 || rotation == R180)
+        return listOf(
+            OcatagonDiagonalEdge(x, y - 1, x + 1, y),
+            OcatagonDiagonalEdge(x + width - 1, y, x + width, y - 1),
+            OcatagonDiagonalEdge(x + width, y - height + 1, x + width - 1, y - height),
+            OcatagonDiagonalEdge(x + 1, y - height, x, y - height + 1)
+        )
+    else
+        return listOf(
+            OcatagonDiagonalEdge(x, y - 1, x + 1, y),
+            OcatagonDiagonalEdge(x + height - 1, y, x + height, y - 1),
+            OcatagonDiagonalEdge(x + height, y - width + 1, x + height - 1, y - width),
+            OcatagonDiagonalEdge(x + 1, y - width, x, y - width + 1)
+
+        )
+}
+
 fun LFigure.edges() = when (position.rotation) {
     R0 -> with(position) {
         listOf(
-            Horizontal(y, x, x + 2), Vertical(x + 2, y - 2, y), Horizontal(y + 2, x + 2, x + 4),
-            Vertical(x + 4, y + 2, y + 4), Horizontal(y + 4, x, x + 4), Vertical(x, y, y + 4)
+            Horizontal(y, x, x + 2), Vertical(x + 2, y - 2, y), Horizontal(y - 2, x + 2, x + 4),
+            Vertical(x + 4, y - 4, y - 2), Horizontal(y - 4, x, x + 4), Vertical(x, y - 4, y)
         )
     }
 
-    R90 -> TODO()
-    R180 -> TODO()
-    R270 -> TODO()
+    R90 -> with(position) {
+        listOf(
+            Horizontal(y, x, x + 4), Vertical(x + 4, y - 2, y), Horizontal(y - 2, x + 2, x + 4),
+            Vertical(x + 2, y - 4, y - 2), Horizontal(y - 4, x, x + 2), Vertical(x, y - 4, y)
+        )
+    }
+
+    R180 -> with(position) {
+        listOf(
+            Horizontal(y, x, x + 4), Vertical(x + 4, y - 4, y), Horizontal(y - 4, x + 2, x + 4),
+            Vertical(x + 2, y - 4, y - 2), Horizontal(y - 2, x, x + 2), Vertical(x, y - 2, y)
+        )
+    }
+
+    R270 -> with(position) {
+        listOf(
+            Horizontal(y, x + 2, x + 4), Vertical(x + 4, y - 4, y), Horizontal(y - 4, x, x + 4),
+            Vertical(x, y - 4, y - 2), Horizontal(y - 2, x, x + 2), Vertical(x + 2, y - 2, y)
+        )
+    }
 }
