@@ -12,7 +12,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 class PlayerDao {
 
-    fun create(name: String, money: Int, gameId: Long) = transaction {
+    fun create(gameId: Long, name: String, money: Int, color: String) = transaction {
         addLogger(StdOutSqlLogger)
         PlayerEntity.new {
             this.name = name
@@ -21,12 +21,12 @@ class PlayerDao {
         }
     }
 
-    fun get(name: String, gameId: Long): PlayerEntity = transaction {
+    fun get(gameId: Long, name: String): PlayerEntity = transaction {
         addLogger(StdOutSqlLogger)
         PlayerEntity.find(Players.game eq gameId and (Players.name eq name)).first()
     }
 
-    fun plusMoney(name: String, gameId: Long, amount: Int) = transaction {
+    fun plusMoney(gameId: Long, name: String, amount: Int) = transaction {
         addLogger(StdOutSqlLogger)
         val player = PlayerEntity.find(Players.game eq gameId and (Players.name eq name))
             .first()
@@ -34,7 +34,7 @@ class PlayerDao {
         player.money
     }
 
-    fun minusMoney(name: String, gameId: Long, amount: Int): Int = transaction {
+    fun minusMoney(gameId: Long, name: String, amount: Int): Int = transaction {
         addLogger(StdOutSqlLogger)
         val player = PlayerEntity.find(Players.game eq gameId and (Players.name eq name))
             .first()

@@ -11,4 +11,5 @@ class PlayerEntity(id: EntityID<Long>) : LongEntity(id) {
     var name by Players.name
     var game by Players.game
     var money by Players.money
+    var color by Players.color
 }
