@@ -1,8 +1,6 @@
 package com.github.marzr.castles
 
-import com.github.marzr.castles.table.Games
-import com.github.marzr.castles.table.JoinedUsers
-import com.github.marzr.castles.table.PreGames
+import com.github.marzr.castles.table.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
@@ -19,6 +17,8 @@ class Database {
             SchemaUtils.create(Games)
             SchemaUtils.create(PreGames)
             SchemaUtils.create(JoinedUsers)
+            SchemaUtils.create(Players)
+            SchemaUtils.create(BonusCards)
         }
     }
 }

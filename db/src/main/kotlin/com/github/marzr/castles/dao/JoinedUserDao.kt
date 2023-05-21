@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 
-class JoinedUsersDao {
+class JoinedUserDao {
     fun joinGame(name: String, preGameId: Long) = transaction {
         addLogger(StdOutSqlLogger)
         JoinedUserEntity.new {
@@ -19,6 +19,7 @@ class JoinedUsersDao {
     }
 
     fun getJoinedUsers(preGameId: Long) = transaction {
+        addLogger(StdOutSqlLogger)
         JoinedUserEntity.find(JoinedUsers.preGame eq preGameId).map {
             it.name
         }.toList()
