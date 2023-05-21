@@ -20,6 +20,7 @@ class Database {
             SchemaUtils.create(Players)
             SchemaUtils.create(BonusCards)
             SchemaUtils.create(Markets)
+            SchemaUtils.create(KingFavors)
         }
     }
 }
