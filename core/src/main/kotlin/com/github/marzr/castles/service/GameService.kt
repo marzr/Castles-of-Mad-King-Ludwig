@@ -2,6 +2,7 @@ package com.github.marzr.castles.service
 
 import com.github.marzr.castles.dao.GameDao
 import com.github.marzr.castles.dao.JoinedUserDao
+import com.github.marzr.castles.dao.MarketDao
 import com.github.marzr.castles.game.Game
 import com.github.marzr.castles.game.Player
 
@@ -11,7 +12,8 @@ private const val MONEY_TO_RECEIVE_WHEN_PASS_TURN = 5000
 class GameService(
     private val gameDao: GameDao,
     private val joinedUserDao: JoinedUserDao,
-    private val playerDbService: PlayerDbService
+    private val playerDbService: PlayerDbService,
+    private val MarketDbService: MarketDbService
 ) {
 
     private val games: MutableMap<Long, Game> = mutableMapOf()
@@ -21,10 +23,11 @@ class GameService(
         val id = gameDao.create().id.value
         return Game(users, id).also { game ->
             // TODO persist decks
-            // TODO persist market
             // TODO persist king favors
 
-            game.market.fullfill(game.roomsDeck) // TODO persist market
+            game.market.fullfill(game.roomsDeck)
+            MarketDbService.create(id, game.market)
+
             games[id] = game
 
             game.players.list.forEach {
