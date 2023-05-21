@@ -19,7 +19,7 @@ class GameService {
 
     fun getGame(id: Long): Game? = games[id]
 
-    fun passTurnAndReceiveMoney(player: Player): Player {
+    fun makeTurnGetMoney(player: Player): Player {
         player.money = player.money + MONEY_TO_RECEIVE_WHEN_PASS_TURN
         return player
     }

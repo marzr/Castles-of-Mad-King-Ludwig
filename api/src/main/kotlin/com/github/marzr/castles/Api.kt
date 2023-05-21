@@ -85,7 +85,7 @@ fun startServer(
                     val game = gameService.getGame(gameId) ?: return@get gameNotFound()
                     val currentUser = call.principal<UserIdPrincipal>()
                     val player = game.players.get(currentUser!!.name)
-                    val playerMoney = PlayerMoneyDto(gameService.passTurnAndReceiveMoney(player).money)
+                    val playerMoney = PlayerMoneyDto(gameService.makeTurnGetMoney(player).money)
                     call.respond(playerMoney)
                 }
             }
