@@ -101,5 +101,7 @@ interface BonusCard {
                 AllFigureTypesBonusCard + GalleriesBonusCard + ExternalEntrancesBonusCard +
                 SquareRoomsBonusCard + MoneyBonusCard + AllRoomPurposesBonusCard +
                 StairsBonusCard + CompletedRoomsBonusCard + CircularRoomsBonusCard
+
+        val bonusCardById = allBonusCards.associateBy { it.id }
     }
 }

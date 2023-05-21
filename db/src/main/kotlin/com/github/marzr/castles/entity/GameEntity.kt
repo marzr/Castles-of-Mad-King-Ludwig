@@ -7,6 +7,4 @@ import org.jetbrains.exposed.dao.id.EntityID
 
 class GameEntity(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<GameEntity>(Games)
-
-    var playersCount by Games.playersCount
 }

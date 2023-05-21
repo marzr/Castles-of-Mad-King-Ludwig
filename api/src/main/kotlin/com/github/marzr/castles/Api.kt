@@ -4,7 +4,7 @@ import com.github.marzr.castles.dto.*
 import com.github.marzr.castles.dto.ErrorCode.GAME_ID_REQUIRED
 import com.github.marzr.castles.dto.ErrorCode.GAME_NOT_FOUND
 import com.github.marzr.castles.service.GameService
-import com.github.marzr.castles.service.PreGameService
+import com.github.marzr.castles.service.PreGameDbService
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.NotFound
 import io.ktor.serialization.kotlinx.json.*
@@ -21,7 +21,7 @@ import io.ktor.util.pipeline.*
 @OptIn(ExperimentalStdlibApi::class)
 fun startServer(
     gameService: GameService,
-    preGameService: PreGameService
+    preGameDbService: PreGameDbService
 ) {
     embeddedServer(Netty, port = 8000) {
         install(ContentNegotiation) {
@@ -49,18 +49,18 @@ fun startServer(
                 }
                 post("/preGame") {
                     val currentUser = call.principal<UserIdPrincipal>()!!.name
-                    val preGame = preGameService.create(currentUser).toDto()
+                    val preGame = preGameDbService.create(currentUser).toDto()
                     call.respond(preGame)
                 }
                 post("/preGame/{id}/join") {
                     val preGameId = call.parameters["id"]?.toLongOrNull() ?: TODO("400")
                     val currentUser = call.principal<UserIdPrincipal>()!!.name
-                    val preGame = preGameService.join(currentUser, preGameId).toDto()
+                    val preGame = preGameDbService.join(currentUser, preGameId).toDto()
                     call.respond(preGame)
                 }
                 post("/game") {
-                    val gameSettings = call.receive<GameSettingsDto>()
-                    val game = gameService.createGame(gameSettings.playersCount).toDto()
+                    val gameSettings = call.receive<CreateGameDto>()
+                    val game = gameService.createGame(gameSettings.preGameId).toDto()
                     call.respond(game)
                 }
                 get("/game/{id}") {
@@ -80,12 +80,12 @@ fun startServer(
                     val tile = call.receive<PositionedTileDto>()
                     call.respondText("Hello, Tile $tile")
                 }
-                get("/game/{id}/getMoney") {
-                    val gameId = call.parameters["id"]?.toLongOrNull() ?: return@get gameIdRequired()
-                    val game = gameService.getGame(gameId) ?: return@get gameNotFound()
+                post("/game/{id}/getMoney") {
+                    val gameId = call.parameters["id"]?.toLongOrNull() ?: return@post gameIdRequired()
+                    val game = gameService.getGame(gameId) ?: return@post gameNotFound()
                     val currentUser = call.principal<UserIdPrincipal>()
                     val player = game.players.get(currentUser!!.name)
-                    val playerMoney = PlayerMoneyDto(gameService.makeTurnGetMoney(player).money)
+                    val playerMoney = PlayerMoneyDto(gameService.makeTurnGetMoney(gameId, player).money)
                     call.respond(playerMoney)
                 }
             }

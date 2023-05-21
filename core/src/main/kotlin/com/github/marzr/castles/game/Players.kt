@@ -3,16 +3,20 @@ package com.github.marzr.castles.game
 import java.lang.IllegalStateException
 import java.util.*
 
-class Players(private val count: Int) {
+class Players(users: List<String>) {
     private var current = 0
     private var curentBuyer = 1
 
     init {
-        if (count < 2 || count > 4) throw IllegalStateException("Illegal players count $count")
+        if (users.size < 2 || users.size > 4)
+            throw IllegalStateException("Illegal players count ${users.size}")
+    }
+    companion object {
+        const val INITIAL_MONEY_AMOUNT = 15000
     }
 
-    val list: List<Player> = Player.PlayerColor.values().take(count).map {
-        Player("Player ${it.toString().lowercase(Locale.getDefault())}", it)
+    val list: List<Player> = Player.PlayerColor.values().take(users.size).zip(users).map { (color, name) ->
+        Player(name, color, INITIAL_MONEY_AMOUNT)
     }
 
     //TODO remove
@@ -26,7 +30,7 @@ class Players(private val count: Int) {
 
     private fun nextBuilder(): Player {
         current += 1
-        current %= count
+        current %= list.size
         return list[current]
     }
 

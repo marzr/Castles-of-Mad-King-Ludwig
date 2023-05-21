@@ -1,32 +1,21 @@
 package com.github.marzr.castles.game
 
+import com.github.marzr.castles.data.RoomTile
 import com.github.marzr.castles.data.bonus.BonusCard
 import com.github.marzr.castles.data.bonus.KingsFavor
 import com.github.marzr.castles.data.allRooms
 import java.lang.IllegalStateException
 
 @ExperimentalStdlibApi
-class Game(playersCount: Int, val id: Long) {
-    private val roomsDeck = Deck(allRooms)
-    private val bonusDeck = Deck(BonusCard.allBonusCards)
-
-    val kingsFavors = Deck(KingsFavor.allFavors).issue(playersCount)
-
-    val market = Market(playersCount)
-    val players = Players(playersCount)
-
-    init {
-        players.list.forEach {
-            it.money = 15000
-        }
-
-        players.list.forEach {
-            it.bonusesToChoose.addAll(bonusDeck.issue(3))
-        }
-
-        market.fullfill(roomsDeck)
-    }
-
+class Game(
+    users: List<String>,
+    val id: Long,
+    val kingsFavors: List<KingsFavor> = Deck(KingsFavor.allFavors).issue(users.size),
+    val roomsDeck : Deck<RoomTile> = Deck(allRooms),
+    val bonusDeck : Deck<BonusCard> = Deck(BonusCard.allBonusCards),
+    val market : Market = Market(users.size),
+    val players : Players = Players(users)
+) {
     fun startGame() {
         checkBonusesChosen()
     }
@@ -38,32 +27,7 @@ class Game(playersCount: Int, val id: Long) {
 
     fun nextTurn() {
         checkBonusesChosen()
-        market.fullfill(roomsDeck)
-        players.nextTurn()
-    }
-}
-
-@ExperimentalStdlibApi
-fun main() {
-    with(Game(4, 1)) {
-        players.list.forEach {
-            it.bonuses.addAll(it.bonusesToChoose.take(2))
-            it.bonusesToChoose.clear()
-        }
-        startGame()
-        println(kingsFavors)
-        println(market)
-
-        val buyer = players.currentBuyer()
-        market.buy(buyer, players.builder(), Market.Price.PRICE_1000)
-
-        println(market)
-
-        println(players.builder())
-        println(buyer)
-        nextTurn()
-        println("----------------")
-
-        println(players.builder())
+        market.fullfill(roomsDeck) // TODO move to service and persist
+        players.nextTurn()// TODO move to service and persist
     }
 }
