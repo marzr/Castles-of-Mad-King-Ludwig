@@ -23,9 +23,10 @@ fun PositionedTile.hasContactingFence(other: PositionedTile): Boolean {
         if (it intersects fenceSegment)
             return true
     }
-    if (this.toFigure() is Octagon && other.toFigure() is Octagon) {
-        val thisFigure = this.toFigure() as Octagon
-        val otherFigure = other.toFigure() as Octagon
+
+    val thisFigure = this.toFigure()
+    val otherFigure = other.toFigure()
+    if (thisFigure is Octagon && otherFigure is Octagon) {
         val edge = thisFigure.diagonalEdges().filter {
             when (fence) {
                 is Vertical -> it.x1 == fence.x || it.x2 == fence.x

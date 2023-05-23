@@ -44,7 +44,7 @@ fun PositionedTile.edges() = when (val f = this.toFigure()) {
     is LFigure -> f.edges()
 }
 
-fun Circle.edges() = Position.Rotation.values().map {
+fun Circle.edges(): List<Edge> = Position.Rotation.values().map {
     this.copy(position = position.copy(rotation = it)).top()
 }
 
