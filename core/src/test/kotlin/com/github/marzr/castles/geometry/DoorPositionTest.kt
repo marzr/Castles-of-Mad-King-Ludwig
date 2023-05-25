@@ -19,7 +19,7 @@ class DoorPositionTest {
                 DoorPosition(-5, -2, VERTICAL),
                 DoorPosition(-3, 0, HORIZONTAL),
                 DoorPosition(0, -2, VERTICAL)
-            ), theater.doorPositions().toSet()
+            ), theater.doorPositions()
         )
 
         assertEquals(
@@ -27,20 +27,77 @@ class DoorPositionTest {
                 DoorPosition(-4, 2, VERTICAL),
                 DoorPosition(-1, 2, VERTICAL),
                 DoorPosition(-3, 0, HORIZONTAL)
-            ), piano.doorPositions().toSet()
+            ), piano.doorPositions()
         )
         assertEquals(
             setOf(
                 DoorPosition(5, -2, VERTICAL),
                 DoorPosition(8, -2, VERTICAL),
                 DoorPosition(6, -4, HORIZONTAL)
-            ), musical.doorPositions().toSet()
+            ), musical.doorPositions()
         )
         assertEquals(
             setOf(
                 DoorPosition(2, 5, HORIZONTAL),
                 DoorPosition(2, 0, HORIZONTAL),
-            ), greenhouse.doorPositions().toSet()
+            ), greenhouse.doorPositions()
+        )
+    }
+
+    @Test
+    fun `rectangle test R0`() {
+        val garden = PositionedTile(roomsByTitle["Парадные сады"]!!, Position(0, 5, Position.Rotation.R0))
+        assertEquals(
+            setOf(
+                DoorPosition(4, 2, HORIZONTAL),
+                DoorPosition(6, 5, VERTICAL),
+                DoorPosition(6, 3, VERTICAL)
+            ), garden.doorPositions()
+        )
+    }
+
+    @Test
+    fun `rectangle test R90`() {
+        val garden = PositionedTile(roomsByTitle["Сад тыкв"]!!, Position(1, 5, Position.Rotation.R90))
+        assertEquals(
+            setOf(
+                DoorPosition(3, 5, HORIZONTAL),
+                DoorPosition(4, 1, HORIZONTAL),
+                DoorPosition(1, 2, VERTICAL)
+            ), garden.doorPositions()
+        )
+    }
+
+    @Test
+    fun `rectangle test R180`() {
+        val hall = PositionedTile(roomsByTitle["Главный зал"]!!, Position(-2, 2, Position.Rotation.R180))
+        assertEquals(
+            setOf(
+                DoorPosition(-2, 2, HORIZONTAL),
+                DoorPosition(0,2, HORIZONTAL),
+                DoorPosition(2, 2, HORIZONTAL),
+                DoorPosition(4, 2, HORIZONTAL),
+                DoorPosition(-2, 2, VERTICAL),
+                DoorPosition(-2, 1, VERTICAL),
+                DoorPosition(5, 2, VERTICAL),
+                DoorPosition(5, 1, VERTICAL),
+                DoorPosition(-1, 0, HORIZONTAL),
+                DoorPosition(1, 0, HORIZONTAL),
+                DoorPosition(3, 0, HORIZONTAL)
+            ), hall.doorPositions()
+        )
+    }
+
+    @Test
+    fun `rectangle test R270`() {
+        val artRoom = PositionedTile(roomsByTitle["Художественный класс"]!!, Position(-1, 4, Position.Rotation.R270))
+        assertEquals(
+            setOf(
+                DoorPosition(-1, 4, HORIZONTAL),
+                DoorPosition(2,4, VERTICAL),
+                DoorPosition(-1, 1, VERTICAL),
+                DoorPosition(0, -2, HORIZONTAL)
+            ), artRoom.doorPositions()
         )
     }
 }
