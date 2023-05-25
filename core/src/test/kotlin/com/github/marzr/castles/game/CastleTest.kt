@@ -2,6 +2,7 @@ package com.github.marzr.castles.game
 
 import com.github.marzr.castles.data.Foyer
 import com.github.marzr.castles.data.roomsByTitle
+import com.github.marzr.castles.game.Player.PlayerColor.YELLOW
 import com.github.marzr.castles.geometry.Position
 import com.github.marzr.castles.geometry.Position.Rotation.R0
 import com.github.marzr.castles.geometry.Position.Rotation.R270
@@ -10,7 +11,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class CastleTest {
-    private val foyer = PositionedTile(Foyer(), Position(0, 0, R0)) // 3 3
+    private val foyer = PositionedTile(Foyer(YELLOW), Position(0, 0, R0)) // 3 3
 
     @Test
     fun testCircles() {

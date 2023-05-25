@@ -1,12 +1,15 @@
 package com.github.marzr.castles.service
 
-import com.github.marzr.castles.dao.GameDao
-import com.github.marzr.castles.dao.JoinedUserDao
-import com.github.marzr.castles.dao.KingFavorDao
+import com.github.marzr.castles.dao.*
+import com.github.marzr.castles.data.Foyer
 import com.github.marzr.castles.data.RoomTile
 import com.github.marzr.castles.game.Game
 import com.github.marzr.castles.game.Market
 import com.github.marzr.castles.game.Player
+import com.github.marzr.castles.game.Players
+import com.github.marzr.castles.geometry.Position
+import com.github.marzr.castles.geometry.Position.Rotation.R0
+import com.github.marzr.castles.geometry.PositionedTile
 import java.lang.IllegalStateException
 
 private const val MONEY_TO_RECEIVE_WHEN_PASS_TURN = 5000
@@ -17,7 +20,9 @@ class GameService(
     private val joinedUserDao: JoinedUserDao,
     private val playerDbService: PlayerDbService,
     private val marketDbService: MarketDbService,
-    private val kingFavorDao: KingFavorDao
+    private val kingFavorDao: KingFavorDao,
+    private val roomDao: RoomDao,
+    private val bonusCardDao: BonusCardDao
 ) {
 
     companion object {
@@ -48,7 +53,22 @@ class GameService(
             game.players.list.forEach {
                 it.bonusesToChoose.addAll(game.bonusDeck.issue(3))
             }
-            game.players.list.forEach { player -> playerDbService.create(id, player) }
+
+            val players = Player.PlayerColor.values().take(users.size).zip(users).map { (color, name) ->
+                val playerId = playerDbService.create(game.id, name, Players.INITIAL_MONEY_AMOUNT, color)
+                Player(playerId, name, Players.INITIAL_MONEY_AMOUNT, color).also {
+                    it.bonusesToChoose.forEach {
+                        bonusCardDao.addBonus(it.id, playerId, toChoose = true)
+                    }
+                }
+            }
+            game.players.list = players
+
+            game.players.list.forEach {
+                val tile = PositionedTile(Foyer(it.color), Position(0, 0, R0))
+                it.castle.addTile(tile)
+                with(tile.position) { roomDao.create(it.id, tile.tile.title, x, y, rotation.name) }
+            }
         }
     }
 

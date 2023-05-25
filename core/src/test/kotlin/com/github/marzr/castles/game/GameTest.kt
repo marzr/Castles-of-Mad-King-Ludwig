@@ -13,7 +13,7 @@ class GameTest : DbTest {
 
     val gameService = GameService(
         GameDao(), JoinedUserDao(), PlayerDbService(PlayerDao(), BonusCardDao()),
-        MarketDbService(MarketDao()), KingFavorDao()
+        MarketDbService(MarketDao()), KingFavorDao(), RoomDao(), BonusCardDao()
     )
 
     val preGameDbService = PreGameDbService(PreGameDao(), JoinedUserDao())

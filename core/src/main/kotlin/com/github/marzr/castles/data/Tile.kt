@@ -1,5 +1,7 @@
 package com.github.marzr.castles.data
 
+import com.github.marzr.castles.game.Player
+
 sealed interface Tile {
     val title: String
     val roomPurpose: RoomPurpose
@@ -13,8 +15,8 @@ class Stairs : CorridorTile() {
     override val title = "Stairs"
 }
 
-class Foyer: CorridorTile() {
-    override val title = "Foyer"
+class Foyer(color: Player.PlayerColor): CorridorTile() {
+    override val title = "Foyer$color"
 }
 
 class Hallway : CorridorTile() {

@@ -3,6 +3,7 @@ package com.github.marzr.castles.geometry
 import com.github.marzr.castles.data.Foyer
 import com.github.marzr.castles.data.Stairs
 import com.github.marzr.castles.data.roomsByTitle
+import com.github.marzr.castles.game.Player.PlayerColor.GREEN
 import com.github.marzr.castles.geometry.Position.Rotation.R0
 import com.github.marzr.castles.geometry.Position.Rotation.R90
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -13,7 +14,7 @@ class IntersectionsTest {
 
     @Test
     fun test() {
-        val foyer = PositionedTile(Foyer(), Position(0, 0, R0))
+        val foyer = PositionedTile(Foyer(GREEN), Position(0, 0, R0))
         val stairs = PositionedTile(Stairs(), Position(1, 3, R90))
         assertFalse(foyer intersects stairs)
     }

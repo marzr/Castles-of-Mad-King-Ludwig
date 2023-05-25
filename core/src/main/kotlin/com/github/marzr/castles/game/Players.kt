@@ -11,18 +11,21 @@ class Players(users: List<String>) {
         if (users.size < 2 || users.size > 4)
             throw IllegalStateException("Illegal players count ${users.size}")
     }
+
     companion object {
         const val INITIAL_MONEY_AMOUNT = 15000
     }
 
-    val list: List<Player> = Player.PlayerColor.values().take(users.size).zip(users).map { (color, name) ->
-        Player(name, color, INITIAL_MONEY_AMOUNT)
-    }
+    var list: List<Player> = emptyList()
 
     //TODO remove
     private val map = list.mapIndexed { i, player -> ("p${i + 1}" to player) }.toMap()
+    private val mapById = list.associate { (it.id to it) }
+
 
     fun get(userName: String) = map[userName]!!
+
+    fun get(id: Long) = mapById[id]!!
 
     fun builder(): Player = list[current]
 
