@@ -23,4 +23,12 @@ class DoorContactTest {
         assertEquals(setOf(DoorPosition(-3, 0, HORIZONTAL)), doorContact(theater, piano))
         assertEquals(emptySet<DoorPosition>(), doorContact(greenhouse, piano))
     }
+
+    @Test
+    fun `test rectangles`() {
+        val focusRoom = PositionedTile(roomsByTitle["Комната для медитации"]!!, Position(1, 3, R270))
+        val clock = PositionedTile(roomsByTitle["Часовня"]!!, Position(3, 4, R180))
+
+        assertEquals(setOf(DoorPosition(3, 3, VERTICAL)), doorContact(focusRoom, clock))
+    }
 }
