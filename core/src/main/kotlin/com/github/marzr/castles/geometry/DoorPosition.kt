@@ -14,7 +14,13 @@ enum class DoorRotation {
 }
 
 fun PositionedTile.doorPositions(): Set<DoorPosition> = when (this.tile) {
-    is Foyer -> TODO()
+    is Foyer -> with(position) { // expected only RO position
+        setOf(
+            DoorPosition(x + 1, y, HORIZONTAL),
+            DoorPosition(x + 3, y - 1, VERTICAL),
+            DoorPosition(x, y - 1, VERTICAL)
+        )
+    }
     is Stairs -> TODO()
     is Hallway -> TODO()
     is RoomTile -> this.tile.doorPosition(position)
