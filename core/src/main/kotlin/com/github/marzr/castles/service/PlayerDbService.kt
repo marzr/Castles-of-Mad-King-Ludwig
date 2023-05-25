@@ -9,20 +9,16 @@ class PlayerDbService(
     private val playerDao: PlayerDao,
     private val bonusCardDao: BonusCardDao
 ) {
-    fun create(gameId: Long, player: Player): Long {
-        val playerId = playerDao.create(gameId, player.name, player.money, player.color.name).id.value
-        player.bonusesToChoose.forEach {
-            bonusCardDao.addBonus(it.id, playerId, toChoose = true)
-        }
-        return playerId
-    }
+    fun create(gameId: Long, name: String, money: Int, color: Player.PlayerColor): Long =
+        playerDao.create(gameId, name, money, color.name).id.value
+
 
     fun load(name: String, gameId: Long): Player {
         val entity = playerDao.get(gameId, name)
         val bonusCards = bonusCardDao.getBonuses(entity.id.value).map {
             BonusCard.bonusCardById[it.name]!!
         }.toMutableList()
-        return Player(name, enumValueOf(entity.color), bonuses = bonusCards)
+        return Player(entity.id.value, name, entity.money, enumValueOf(entity.color), bonuses = bonusCards)
     }
 
     fun plusMoney(name: String, gameId: Long, amount: Int): Int =
