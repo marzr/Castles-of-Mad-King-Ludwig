@@ -14,6 +14,7 @@ import javafx.scene.image.Image
 import javafx.scene.input.MouseButton
 import javafx.scene.input.MouseEvent
 import javafx.scene.input.ScrollEvent
+import javafx.scene.layout.Pane
 import javafx.scene.layout.Region
 import javafx.stage.Screen
 import tornadofx.*
@@ -56,34 +57,35 @@ class MyView : View() {
 
         region {
             pane {
-                imageview {
-                    imageProperty().bind(mainController.buingImageProperty)
-                    visibleProperty().bind(mainController.visibleProperty)
-                    layoutXProperty().bind(mainController.xBuyProperty)
-                    layoutYProperty().bind(mainController.yBuyProperty)
-                    fitWidthProperty().bind(mainController.widthBuyProperty)
-                    fitHeightProperty().bind(mainController.heightBuyProperty)
-                    rotateProperty().bind(mainController.rotationBuyProperty)
-                    onDoubleClick {
-                        println("double click")
-                    }
-                    onMouseClicked = EventHandler {
-                        if (it.button == MouseButton.SECONDARY)
-                            mainController.rotationBuy += 90.0
-                    }
-                    toFront()
+                mainController.buyingTilePane = this
+                onDoubleClick {
+                    println("double click pane")
+
+                    val x = Math.round((mainController.xBuy - mainController.xShift - centerX) / mainController.scale)
+                    val y = Math.round((-mainController.yBuy + mainController.yShift + centerY) / mainController.scale)
+                    println("$x $y")
+                    mainController.castlePane.add(
+                        imageRoom(PositionedTile(mainController.byingTile!!, Position(x.toInt(), y.toInt(), R0)))
+                    )
+                    mainController.removeBuying = true
+                    mainController.marketMap[mainController.byingTile!!.title]!!.value = true
+
                 }
                 onMousePressed = EventHandler {
+                    println("onMousePressed buying")
+
                     mainController.xInit = it.x - mainController.xBuy
                     mainController.yInit = it.y - mainController.yBuy
                 }
                 onMouseDragged = EventHandler {
+                    println("onMouseDragged buying")
                     mainController.xBuy = it.x - mainController.xInit
                     mainController.yBuy = it.y - mainController.yInit
                 }
             }
 
             pane {
+                mainController.castlePane = this
                 imageRoom(PositionedTile(roomsByTitle["Спальня королевы"]!!, Position(0, 0, R0)))
                 imageRoom(PositionedTile(roomsByTitle["Буфетная"]!!, Position(-3, 4, R270)))
                 imageRoom(PositionedTile(roomsByTitle["Комната отдыха"]!!, Position(-2, 7, R90)))
@@ -123,6 +125,7 @@ class MyView : View() {
     }
 
     private fun onMouseDraggedEventHandler(): EventHandler<MouseEvent> = EventHandler {
+        println("onMouseDraggedEventHandler castle")
         if (mainController.xDrag == 0.0) {
             mainController.xDrag = it.x
             mainController.yDrag = it.y
@@ -160,8 +163,8 @@ class MyView : View() {
 
         val roomHeightProperty = RoomProperty(tile.toFigure().height())
         val roomWidthProperty = RoomProperty(tile.toFigure().width())
-        val roomXProperty = RoomProperty(centerX + tile.position.x * mainController.scale)
-        val roomYProperty = RoomProperty(centerY - tile.position.y * mainController.scale)
+        val roomXProperty = RoomProperty(centerX + tile.position.x * mainController.scale + mainController.xShift)
+        val roomYProperty = RoomProperty(centerY - tile.position.y * mainController.scale + mainController.yShift)
 
         fitHeightProperty().bind(roomHeightProperty.property)
         fitWidthProperty().bind(roomWidthProperty.property)
@@ -175,10 +178,33 @@ class MyView : View() {
         rotate = tile.position.rotation.toNumber()
     }
 
-    fun Region.imageMarketRoom(tile: RoomTile) = hbox {
+    private fun Region.imageMarketRoom(tile: RoomTile) = hbox {
+        val sbp = SimpleBooleanProperty(false)
+        mainController.marketMap[tile.title] = sbp
+        removeWhen(sbp)
         padding = Insets(10.0, 20.0, 10.0, 20.0)
         imageview {
             onMousePressed = EventHandler {
+                mainController.removeBuying = false
+                mainController.buyingTilePane.add(
+                    imageview {
+                        imageProperty().bind(mainController.buingImageProperty)
+                        visibleProperty().bind(mainController.visibleProperty)
+                        layoutXProperty().bind(mainController.xBuyProperty)
+                        layoutYProperty().bind(mainController.yBuyProperty)
+                        fitWidthProperty().bind(mainController.widthBuyProperty)
+                        fitHeightProperty().bind(mainController.heightBuyProperty)
+                        rotateProperty().bind(mainController.rotationBuyProperty)
+                        onMouseClicked = EventHandler {
+                            if (it.button == MouseButton.SECONDARY)
+                                mainController.rotationBuy += 90.0
+                        }
+                        toFront()
+                        removeWhen(mainController.removeBuyingProperty)
+                    }
+                )
+
+                println("onMousePressed imageMarketRoom ${tile.title}")
                 mainController.byingTile = tile
                 val f = tile.toFigure(Position(0, 0, R0))
                 mainController.widthBuy = f.width()
@@ -216,9 +242,10 @@ private fun Position.Rotation.toNumber(): Double = when (this) {
     R270 -> 270.0
 }
 
-class MainController : Controller() {
+class MainController {
     val roomPropertyMap: MutableMap<String, RoomProperty> = mutableMapOf()
     val tilesMap = mutableMapOf<String, PositionedTile>()
+    val marketMap = mutableMapOf<String, SimpleBooleanProperty>()
     fun imageUri(name: String) = this.javaClass.getResource("/image/${filesMap[name]}")?.toURI().toString()
     fun imageProperty(name: String) = SimpleObjectProperty(Image(imageUri(name)))
 
@@ -259,9 +286,15 @@ class MainController : Controller() {
     var rotationBuy by rotationBuyProperty
 
     var byingTile: RoomTile? = null
+    lateinit var buyingTilePane: Pane
 
     var xInit = 0.0
     var yInit = 0.0
+
+    val removeBuyingProperty = SimpleBooleanProperty(false)
+    var removeBuying by removeBuyingProperty
+
+    lateinit var castlePane: Pane
 }
 
 class RoomProperty(initial: Double) {
