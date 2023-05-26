@@ -1,6 +1,7 @@
 package com.github.marzr.castles
 
 import com.github.marzr.castles.data.RoomTile
+import com.github.marzr.castles.data.rooms.OctagonRoom
 import com.github.marzr.castles.data.roomsByTitle
 import com.github.marzr.castles.geometry.*
 import com.github.marzr.castles.geometry.Position.Rotation.*
@@ -18,6 +19,7 @@ import javafx.scene.layout.Pane
 import javafx.scene.layout.Region
 import javafx.stage.Screen
 import tornadofx.*
+import kotlin.math.roundToInt
 
 class CastlesApp : App() {
     override val primaryView = MyView::class
@@ -61,11 +63,14 @@ class MyView : View() {
                 onDoubleClick {
                     println("double click pane")
 
-                    val x = Math.round((mainController.xBuy - mainController.xShift - centerX) / mainController.scale)
-                    val y = Math.round((-mainController.yBuy + mainController.yShift + centerY) / mainController.scale)
+                    val x =
+                        ((mainController.xBuy - mainController.xShift - centerX) / mainController.scale).roundToInt()
+                    val y =
+                        ((-mainController.yBuy + mainController.yShift + centerY) / mainController.scale).roundToInt()
                     println("$x $y")
+                    val rotation = mainController.rotationBuy.toRotation()
                     mainController.castlePane.add(
-                        imageRoom(PositionedTile(mainController.byingTile!!, Position(x.toInt(), y.toInt(), R0)))
+                        imageRoom(PositionedTile(mainController.byingTile!!, Position(x, y, rotation)))
                     )
                     mainController.removeBuying = true
                     mainController.marketMap[mainController.byingTile!!.title]!!.value = true
@@ -125,7 +130,7 @@ class MyView : View() {
     }
 
     private fun onMouseDraggedEventHandler(): EventHandler<MouseEvent> = EventHandler {
-        println("onMouseDraggedEventHandler castle")
+        //println("onMouseDraggedEventHandler castle")
         if (mainController.xDrag == 0.0) {
             mainController.xDrag = it.x
             mainController.yDrag = it.y
@@ -147,6 +152,12 @@ class MyView : View() {
                     centerX + tile.position.x * mainController.scale + mainController.xShift
                 mainController.roomPropertyMap["${it}_y"]!!.value =
                     centerY - tile.position.y * mainController.scale + mainController.yShift
+
+                if (tile.tile is OctagonRoom && (tile.position.rotation == R270 || tile.position.rotation == R90)) {
+                    println("octagon room")
+                    mainController.roomPropertyMap["${it}_x"]!!.value -= mainController.scale/2
+                    mainController.roomPropertyMap["${it}_y"]!!.value -= mainController.scale/2
+                }
             }
         }
     }
@@ -170,6 +181,12 @@ class MyView : View() {
         fitWidthProperty().bind(roomWidthProperty.property)
         layoutYProperty().bind(roomYProperty.property)
         layoutXProperty().bind(roomXProperty.property)
+
+        if (tile.tile is OctagonRoom && (tile.position.rotation == R270 || tile.position.rotation == R90)) {
+            println("octagon room")
+            roomXProperty.value -= mainController.scale/2
+            roomYProperty.value -= mainController.scale/2
+        }
 
         mainController.roomPropertyMap[tile.tile.title] = roomHeightProperty
         mainController.roomPropertyMap[tile.tile.title + "_width"] = roomWidthProperty
@@ -196,10 +213,15 @@ class MyView : View() {
                         fitHeightProperty().bind(mainController.heightBuyProperty)
                         rotateProperty().bind(mainController.rotationBuyProperty)
                         onMouseClicked = EventHandler {
-                            if (it.button == MouseButton.SECONDARY)
+                            if (it.button == MouseButton.SECONDARY) {
                                 mainController.rotationBuy += 90.0
+                                if (mainController.rotationBuy >= 360.0)
+                                    mainController.rotationBuy -= 360.0
+                            }
                         }
                         toFront()
+                        mainController.xBuy = 600.0
+                        mainController.yBuy = 30.0
                         removeWhen(mainController.removeBuyingProperty)
                     }
                 )
@@ -240,6 +262,14 @@ private fun Position.Rotation.toNumber(): Double = when (this) {
     R90 -> 90.0
     R180 -> 180.0
     R270 -> 270.0
+}
+
+private fun Double.toRotation(): Position.Rotation = when (this) {
+    0.0 -> R0
+    90.0 -> R90
+    180.0 -> R180
+    270.0 -> R270
+    else -> throw IllegalStateException("Illegal rotation $this")
 }
 
 class MainController {
