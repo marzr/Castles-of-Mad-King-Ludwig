@@ -48,42 +48,36 @@ class MyView : View() {
         centerY = primaryStage.height / 2
 
         hbox {
-            imageMarketRoom(roomsByTitle["Ателье"]!!)
-            imageMarketRoom(roomsByTitle["Большая спальня"]!!)
-            imageMarketRoom(roomsByTitle["Театр"]!!)
-            imageMarketRoom(roomsByTitle["Лиловый кабинет"]!!)
-            imageMarketRoom(roomsByTitle["Террасы"]!!)
-            imageMarketRoom(roomsByTitle["Темница"]!!)
-            imageMarketRoom(roomsByTitle["Потайная комната"]!!)
+            imageMarketRoom(roomsByTitle["Ателье"]!!, "15000")
+            imageMarketRoom(roomsByTitle["Большая спальня"]!!, "10000")
+            imageMarketRoom(roomsByTitle["Театр"]!!, "8000")
+            imageMarketRoom(roomsByTitle["Лиловый кабинет"]!!, "6000")
+            imageMarketRoom(roomsByTitle["Террасы"]!!, "4000")
+            imageMarketRoom(roomsByTitle["Темница"]!!, "2000")
+            imageMarketRoom(roomsByTitle["Потайная комната"]!!, "1000")
+            prefHeight = 60.0
         }
 
         region {
             pane {
                 mainController.buyingTilePane = this
                 onDoubleClick {
-                    println("double click pane")
-
-                    val x =
-                        ((mainController.xBuy - mainController.xShift - centerX) / mainController.scale).roundToInt()
-                    val y =
-                        ((-mainController.yBuy + mainController.yShift + centerY) / mainController.scale).roundToInt()
-                    println("$x $y")
-                    val rotation = mainController.rotationBuy.toRotation()
-                    mainController.castlePane.add(
-                        imageRoom(PositionedTile(mainController.byingTile!!, Position(x, y, rotation)))
-                    )
-                    mainController.removeBuying = true
-                    mainController.marketMap[mainController.byingTile!!.title]!!.value = true
-
+                    with(mainController) {
+                        val x = ((xBuy - xShift - centerX) / scale).roundToInt()
+                        val y = ((-yBuy + yShift + centerY) / scale).roundToInt()
+                        val rotation = rotationBuy.toRotation()
+                        castlePane.add(
+                            imageRoom(PositionedTile(byingTile!!, Position(x, y, rotation)))
+                        )
+                        removeBuying = true
+                        marketMap[mainController.byingTile!!.title]!!.value = true
+                    }
                 }
                 onMousePressed = EventHandler {
-                    println("onMousePressed buying")
-
                     mainController.xInit = it.x - mainController.xBuy
                     mainController.yInit = it.y - mainController.yBuy
                 }
                 onMouseDragged = EventHandler {
-                    println("onMouseDragged buying")
                     mainController.xBuy = it.x - mainController.xInit
                     mainController.yBuy = it.y - mainController.yInit
                 }
@@ -130,7 +124,6 @@ class MyView : View() {
     }
 
     private fun onMouseDraggedEventHandler(): EventHandler<MouseEvent> = EventHandler {
-        //println("onMouseDraggedEventHandler castle")
         if (mainController.xDrag == 0.0) {
             mainController.xDrag = it.x
             mainController.yDrag = it.y
@@ -154,7 +147,6 @@ class MyView : View() {
                     centerY - tile.position.y * mainController.scale + mainController.yShift
 
                 if (tile.tile is OctagonRoom && (tile.position.rotation == R270 || tile.position.rotation == R90)) {
-                    println("octagon room")
                     mainController.roomPropertyMap["${it}_x"]!!.value -= mainController.scale/2
                     mainController.roomPropertyMap["${it}_y"]!!.value -= mainController.scale/2
                 }
@@ -183,7 +175,6 @@ class MyView : View() {
         layoutXProperty().bind(roomXProperty.property)
 
         if (tile.tile is OctagonRoom && (tile.position.rotation == R270 || tile.position.rotation == R90)) {
-            println("octagon room")
             roomXProperty.value -= mainController.scale/2
             roomYProperty.value -= mainController.scale/2
         }
@@ -195,12 +186,16 @@ class MyView : View() {
         rotate = tile.position.rotation.toNumber()
     }
 
-    private fun Region.imageMarketRoom(tile: RoomTile) = hbox {
-        val sbp = SimpleBooleanProperty(false)
-        mainController.marketMap[tile.title] = sbp
-        removeWhen(sbp)
+    private fun Region.imageMarketRoom(tile: RoomTile, price: String) = vbox {
+        label {
+            text = price
+            padding = Insets(5.0)
+        }
         padding = Insets(10.0, 20.0, 10.0, 20.0)
         imageview {
+            val sbp = SimpleBooleanProperty(false)
+            mainController.marketMap[tile.title] = sbp
+            removeWhen(sbp)
             onMousePressed = EventHandler {
                 mainController.removeBuying = false
                 mainController.buyingTilePane.add(
@@ -225,8 +220,6 @@ class MyView : View() {
                         removeWhen(mainController.removeBuyingProperty)
                     }
                 )
-
-                println("onMousePressed imageMarketRoom ${tile.title}")
                 mainController.byingTile = tile
                 val f = tile.toFigure(Position(0, 0, R0))
                 mainController.widthBuy = f.width()
