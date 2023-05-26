@@ -72,7 +72,6 @@ class MyView : View() {
                             mainController.rotationBuy += 90.0
                     }
                     toFront()
-
                 }
                 onMousePressed = EventHandler {
                     mainController.xInit = it.x - mainController.xBuy
@@ -82,7 +81,6 @@ class MyView : View() {
                     mainController.xBuy = it.x - mainController.xInit
                     mainController.yBuy = it.y - mainController.yInit
                 }
-
             }
 
             pane {
@@ -95,7 +93,6 @@ class MyView : View() {
                 onMouseDragged = onMouseDraggedEventHandler()
                 toBack()
             }
-
             onScroll = onScrollEventHandler()
         }
     }
@@ -112,7 +109,7 @@ class MyView : View() {
             mainController.heightBuy = f.height()
         }
 
-        mainController.filesMap.keys.forEach {
+        filesMap.keys.forEach {
             val tile = mainController.tilesMap[it]
             if (tile != null) {
                 mainController.roomPropertyMap[it]!!.value = tile.toFigure().height()
@@ -138,7 +135,7 @@ class MyView : View() {
         mainController.xDrag = it.x
         mainController.yDrag = it.y
 
-        mainController.filesMap.keys.forEach {
+        filesMap.keys.forEach {
             val tile = mainController.tilesMap[it]
             if (tile != null) {
                 mainController.roomPropertyMap[it]!!.value = tile.toFigure().height()
@@ -160,7 +157,6 @@ class MyView : View() {
         mainController.tilesMap[tile.tile.title] = tile
         val simpleObjectProperty = mainController.imageProperty(tile.tile.title)
         imageProperty().bind(simpleObjectProperty)
-
 
         val roomHeightProperty = RoomProperty(tile.toFigure().height())
         val roomWidthProperty = RoomProperty(tile.toFigure().width())
@@ -221,52 +217,6 @@ private fun Position.Rotation.toNumber(): Double = when (this) {
 }
 
 class MainController : Controller() {
-    val filesMap = mapOf(
-        "Театр" to "Activity/BC_Theater.png",
-        "Зал заседаний" to TODO(),
-        "Кегельбан" to "Activity/LR_kreg.png",
-        "Игровая" to "Activity/LR_train.png",
-        "Бильярдная" to "Activity/MR_bil.png",
-        "Часовня" to "Activity/MR_oratory.png",
-        "Ателье" to "Activity/MR_sewing_room.png",
-        "Зал приемов" to "Activity/Oct_Aud.png",
-        "Певческий зал" to TODO(),
-        "Фортепианная" to "Activity/SC_Piano.png",
-        "Кабинет Берты" to TODO(),
-        "Музыкальный класс" to TODO(),
-
-        "Верхний зал" to "Corridor/great_hall.png",
-        "Главный зал" to "Corridor/upper_hall.png",
-
-        "Потайная комната" to "Utility/L_panic_room.png",
-
-        "Темница" to "Downstairs/SC_the_hole.png",
-
-        "Буфетная" to "Food/L_scullery.png",
-
-        "Хижина Хундинга" to "Outdoor/BC_hunding.png",
-        "Террасы" to "Outdoor/Oct_terrace.png",
-        "Парадные сады" to "Outdoor/LR_formal_gardens.png",
-
-        "Западный гобеленный зал" to "Living tooms/LR_west_tapestry_room.png",
-        "Художественный класс" to "Living tooms/LR_drawing_room.png",
-        "Восточный гобеленный зал" to "image/Living tooms/BS_east_tapestry_room_bad.png",
-        "Обсерватория" to "Living tooms/BS_observatory.png",
-        "Парадный вестибюль" to "Living tooms/Oct_vestibule.png",
-        "Тронный зал" to "Living tooms/Oct_throne_room.png",
-        "Зал ожидания" to "Living tooms/SC_sitting.png",
-        "Кабинет короля" to "Living tooms/SC_study.png",
-        "Приемная" to "Living tooms/SC_parlor.png",
-        "Салон" to "Living tooms/LoR_salon.png",
-        "Галерея зеркал" to "Living tooms/LoR_mirrors_gallery.png",
-        "Лиловый кабинет" to "Living tooms/SSq_lilac_cabinet.png",
-        "Розовый кабинет" to "Living tooms/SSq_pink_cabinet.png",
-        "Комната для медитации" to "Living tooms/SSq_focus_room.png",
-
-        "Спальня королевы" to "Sleeping/L_queen.png",
-        "Большая спальня" to "Sleeping/Sq_grand_bedchamber.png",
-        "Комната отдыха" to "Sleeping/SR_nap_room.png",
-    )
     val roomPropertyMap: MutableMap<String, RoomProperty> = mutableMapOf()
     val tilesMap = mutableMapOf<String, PositionedTile>()
     fun imageUri(name: String) = this.javaClass.getResource("/image/${filesMap[name]}")?.toURI().toString()
