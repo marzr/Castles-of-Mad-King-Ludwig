@@ -1,7 +1,8 @@
 package com.github.marzr.castles
 
 import com.github.marzr.castles.data.RoomTile
-import com.github.marzr.castles.data.rooms.OctagonRoom
+import com.github.marzr.castles.data.Tile
+import com.github.marzr.castles.data.rooms.*
 import com.github.marzr.castles.data.roomsByTitle
 import com.github.marzr.castles.geometry.*
 import com.github.marzr.castles.geometry.Position.Rotation.*
@@ -35,6 +36,15 @@ class MyView : View() {
 
     private val mainController = MainController()
 
+    private fun rotationShift(tile: Tile, rotation: Position.Rotation): Double = when {
+        tile is OctagonRoom && (rotation == R90 || rotation == R270) -> 1.5
+        tile is LongRectangleRoom && (rotation == R90 || rotation == R270) -> 2.5
+        tile is MiddleRectangleRoom && (rotation == R90 || rotation == R270) -> 1.5
+        tile is LargeRectangleRoom && (rotation == R90 || rotation == R270) -> 1.5
+        tile is SmallRectangleRoom && (rotation == R90 || rotation == R270) -> 1.0
+        else -> 0.0
+    }
+
     override val root = vbox {
         val screen = Screen.getPrimary()
         val bounds = screen.visualBounds
@@ -50,10 +60,10 @@ class MyView : View() {
         hbox {
             imageMarketRoom(roomsByTitle["Ателье"]!!, "15000")
             imageMarketRoom(roomsByTitle["Большая спальня"]!!, "10000")
-            imageMarketRoom(roomsByTitle["Театр"]!!, "8000")
-            imageMarketRoom(roomsByTitle["Лиловый кабинет"]!!, "6000")
+            imageMarketRoom(roomsByTitle["Салон"]!!, "8000")
+            imageMarketRoom(roomsByTitle["Каретный гараж"]!!, "6000")
             imageMarketRoom(roomsByTitle["Террасы"]!!, "4000")
-            imageMarketRoom(roomsByTitle["Темница"]!!, "2000")
+            imageMarketRoom(roomsByTitle["Солярий"]!!, "2000")
             imageMarketRoom(roomsByTitle["Потайная комната"]!!, "1000")
             prefHeight = 60.0
         }
@@ -63,14 +73,15 @@ class MyView : View() {
                 mainController.buyingTilePane = this
                 onDoubleClick {
                     with(mainController) {
-                        val x = ((xBuy - xShift - centerX) / scale).roundToInt()
-                        val y = ((-yBuy + yShift + centerY) / scale).roundToInt()
                         val rotation = rotationBuy.toRotation()
+                        val rotationShift = rotationShift(buyingTile!!, rotation)
+                        val x = ((xBuy - xShift - centerX) / scale + rotationShift).roundToInt()
+                        val y = ((-yBuy + yShift + centerY) / scale + rotationShift).roundToInt()
                         castlePane.add(
-                            imageRoom(PositionedTile(byingTile!!, Position(x, y, rotation)))
+                            imageRoom(PositionedTile(buyingTile!!, Position(x, y, rotation)))
                         )
                         removeBuying = true
-                        marketMap[mainController.byingTile!!.title]!!.value = true
+                        marketMap[mainController.buyingTile!!.title]!!.value = true
                     }
                 }
                 onMousePressed = EventHandler {
@@ -87,7 +98,7 @@ class MyView : View() {
                 mainController.castlePane = this
                 imageRoom(PositionedTile(roomsByTitle["Спальня королевы"]!!, Position(0, 0, R0)))
                 imageRoom(PositionedTile(roomsByTitle["Буфетная"]!!, Position(-3, 4, R270)))
-                imageRoom(PositionedTile(roomsByTitle["Комната отдыха"]!!, Position(-2, 7, R90)))
+                imageRoom(PositionedTile(roomsByTitle["Комната отдыха"]!!, Position(-1, 8, R90)))
                 imageRoom(PositionedTile(roomsByTitle["Хижина Хундинга"]!!, Position(4, -2, R270)))
                 imageRoom(PositionedTile(roomsByTitle["Верхний зал"]!!, Position(2, 0, R0)))
                 onMouseReleased = onMouseReleasedEventHandler()
@@ -104,7 +115,7 @@ class MyView : View() {
         } else
             if (mainController.scale > 10) mainController.scale *= 0.9
 
-        val f = mainController.byingTile?.toFigure(Position(0, 0, R0))
+        val f = mainController.buyingTile?.toFigure(Position(0, 0, R0))
         if (f != null) {
             mainController.widthBuy = f.width()
             mainController.heightBuy = f.height()
@@ -115,10 +126,8 @@ class MyView : View() {
             if (tile != null) {
                 mainController.roomPropertyMap[it]!!.value = tile.toFigure().height()
                 mainController.roomPropertyMap["${it}_width"]!!.value = tile.toFigure().width()
-                mainController.roomPropertyMap["${it}_x"]!!.value =
-                    centerX + tile.position.x * mainController.scale + mainController.xShift
-                mainController.roomPropertyMap["${it}_y"]!!.value =
-                    centerY - tile.position.y * mainController.scale + mainController.yShift
+                mainController.roomPropertyMap["${it}_x"]!!.value = positionX(tile)
+                mainController.roomPropertyMap["${it}_y"]!!.value = positionY(tile)
             }
         }
     }
@@ -141,15 +150,8 @@ class MyView : View() {
             if (tile != null) {
                 mainController.roomPropertyMap[it]!!.value = tile.toFigure().height()
                 mainController.roomPropertyMap["${it}_width"]!!.value = tile.toFigure().width()
-                mainController.roomPropertyMap["${it}_x"]!!.value =
-                    centerX + tile.position.x * mainController.scale + mainController.xShift
-                mainController.roomPropertyMap["${it}_y"]!!.value =
-                    centerY - tile.position.y * mainController.scale + mainController.yShift
-
-                if (tile.tile is OctagonRoom && (tile.position.rotation == R270 || tile.position.rotation == R90)) {
-                    mainController.roomPropertyMap["${it}_x"]!!.value -= mainController.scale/2
-                    mainController.roomPropertyMap["${it}_y"]!!.value -= mainController.scale/2
-                }
+                mainController.roomPropertyMap["${it}_x"]!!.value = positionX(tile)
+                mainController.roomPropertyMap["${it}_y"]!!.value = positionY(tile)
             }
         }
     }
@@ -166,24 +168,30 @@ class MyView : View() {
 
         val roomHeightProperty = RoomProperty(tile.toFigure().height())
         val roomWidthProperty = RoomProperty(tile.toFigure().width())
-        val roomXProperty = RoomProperty(centerX + tile.position.x * mainController.scale + mainController.xShift)
-        val roomYProperty = RoomProperty(centerY - tile.position.y * mainController.scale + mainController.yShift)
+
+        val roomXProperty = RoomProperty(positionX(tile))
+        val roomYProperty = RoomProperty(positionY(tile))
 
         fitHeightProperty().bind(roomHeightProperty.property)
         fitWidthProperty().bind(roomWidthProperty.property)
         layoutYProperty().bind(roomYProperty.property)
         layoutXProperty().bind(roomXProperty.property)
 
-        if (tile.tile is OctagonRoom && (tile.position.rotation == R270 || tile.position.rotation == R90)) {
-            roomXProperty.value -= mainController.scale/2
-            roomYProperty.value -= mainController.scale/2
-        }
-
         mainController.roomPropertyMap[tile.tile.title] = roomHeightProperty
         mainController.roomPropertyMap[tile.tile.title + "_width"] = roomWidthProperty
         mainController.roomPropertyMap[tile.tile.title + "_x"] = roomXProperty
         mainController.roomPropertyMap[tile.tile.title + "_y"] = roomYProperty
         rotate = tile.position.rotation.toNumber()
+    }
+
+    fun positionX(tile: PositionedTile): Double {
+        val rotationShift = rotationShift(tile.tile, tile.position.rotation)
+        return centerX + (tile.position.x - rotationShift) * mainController.scale + mainController.xShift
+    }
+
+    fun positionY(tile: PositionedTile): Double {
+        val rotationShift = rotationShift(tile.tile, tile.position.rotation)
+        return centerY - (tile.position.y - rotationShift) * mainController.scale + mainController.yShift
     }
 
     private fun Region.imageMarketRoom(tile: RoomTile, price: String) = vbox {
@@ -220,7 +228,7 @@ class MyView : View() {
                         removeWhen(mainController.removeBuyingProperty)
                     }
                 )
-                mainController.byingTile = tile
+                mainController.buyingTile = tile
                 val f = tile.toFigure(Position(0, 0, R0))
                 mainController.widthBuy = f.width()
                 mainController.heightBuy = f.height()
@@ -308,7 +316,7 @@ class MainController {
     val rotationBuyProperty = SimpleDoubleProperty(0.0)
     var rotationBuy by rotationBuyProperty
 
-    var byingTile: RoomTile? = null
+    var buyingTile: RoomTile? = null
     lateinit var buyingTilePane: Pane
 
     var xInit = 0.0
