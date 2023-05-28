@@ -1,9 +1,11 @@
 package com.github.marzr.castles
 
+import com.github.marzr.castles.data.Foyer
 import com.github.marzr.castles.data.RoomTile
 import com.github.marzr.castles.data.Tile
 import com.github.marzr.castles.data.rooms.*
 import com.github.marzr.castles.data.roomsByTitle
+import com.github.marzr.castles.game.Player
 import com.github.marzr.castles.geometry.*
 import com.github.marzr.castles.geometry.Position.Rotation.*
 import javafx.application.Application
@@ -96,11 +98,11 @@ class MyView : View() {
 
             pane {
                 mainController.castlePane = this
-                imageRoom(PositionedTile(roomsByTitle["Спальня королевы"]!!, Position(0, 0, R0)))
-                imageRoom(PositionedTile(roomsByTitle["Буфетная"]!!, Position(-3, 4, R270)))
-                imageRoom(PositionedTile(roomsByTitle["Комната отдыха"]!!, Position(-1, 8, R90)))
-                imageRoom(PositionedTile(roomsByTitle["Хижина Хундинга"]!!, Position(4, -2, R270)))
-                imageRoom(PositionedTile(roomsByTitle["Верхний зал"]!!, Position(2, 0, R0)))
+                imageRoom(PositionedTile(Foyer(Player.PlayerColor.RED), Position(0, 0, R0)))
+                imageRoom(PositionedTile(roomsByTitle["Буфетная"]!!, Position(-2, 4, R270)))
+                imageRoom(PositionedTile(roomsByTitle["Комната отдыха"]!!, Position(0, 8, R90)))
+                imageRoom(PositionedTile(roomsByTitle["Хижина Хундинга"]!!, Position(5, -2, R270)))
+                imageRoom(PositionedTile(roomsByTitle["Верхний зал"]!!, Position(3, 0, R0)))
                 onMouseReleased = onMouseReleasedEventHandler()
                 onMouseDragged = onMouseDraggedEventHandler()
                 toBack()
@@ -247,14 +249,14 @@ class MyView : View() {
         is Rectangle -> width * (scale ?: mainController.scale)
         is Circle -> diameter * (scale ?: mainController.scale)
         is LFigure -> 4 * (scale ?: mainController.scale)
-        is Octagon -> 7 * (scale ?: mainController.scale)
+        is Octagon -> width * (scale ?: mainController.scale)
     }
 
     fun Figure.height(scale: Double? = null): Double = when (this) {
         is Rectangle -> height * (scale ?: mainController.scale)
         is Circle -> diameter * (scale ?: mainController.scale)
         is LFigure -> 4 * (scale ?: mainController.scale)
-        is Octagon -> 4 * (scale ?: mainController.scale)
+        is Octagon -> height * (scale ?: mainController.scale)
     }
 }
 

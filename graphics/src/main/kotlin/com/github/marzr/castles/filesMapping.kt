@@ -1,6 +1,11 @@
 package com.github.marzr.castles
 
 val filesMap = mapOf(
+    "FoyerRED" to "foyer/RED.png",
+    "FoyerBLUE" to "foyer/blue.png",
+    "FoyerGRREN" to "foyer/green.png",
+    "FoyerYELLOW" to "foyer/yellow.png",
+
     "Театр" to "Activity/BC_Theater.png",
     // "Зал заседаний" to "",
     "Кегельбан" to "Activity/LR_kreg.png",
