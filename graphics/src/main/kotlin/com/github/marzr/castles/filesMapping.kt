@@ -6,6 +6,10 @@ val filesMap = mapOf(
     "FoyerGRREN" to "foyer/green.png",
     "FoyerYELLOW" to "foyer/yellow.png",
 
+    "Hallway" to "Corridor/hallway.png",
+    "Dark Hallway" to "Corridor/dark_hallway.png",
+    "Stairs" to "Corridor/stairs.png",
+
     "Театр" to "Activity/BC_Theater.png",
     // "Зал заседаний" to "",
     "Кегельбан" to "Activity/LR_kreg.png",

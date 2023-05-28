@@ -1,10 +1,7 @@
 package com.github.marzr.castles
 
-import com.github.marzr.castles.data.Foyer
-import com.github.marzr.castles.data.RoomTile
-import com.github.marzr.castles.data.Tile
+import com.github.marzr.castles.data.*
 import com.github.marzr.castles.data.rooms.*
-import com.github.marzr.castles.data.roomsByTitle
 import com.github.marzr.castles.game.Player
 import com.github.marzr.castles.geometry.*
 import com.github.marzr.castles.geometry.Position.Rotation.*
@@ -22,6 +19,7 @@ import javafx.scene.layout.Pane
 import javafx.scene.layout.Region
 import javafx.stage.Screen
 import tornadofx.*
+import java.util.UUID
 import kotlin.math.roundToInt
 
 class CastlesApp : App() {
@@ -44,6 +42,8 @@ class MyView : View() {
         tile is MiddleRectangleRoom && (rotation == R90 || rotation == R270) -> 1.5
         tile is LargeRectangleRoom && (rotation == R90 || rotation == R270) -> 1.5
         tile is SmallRectangleRoom && (rotation == R90 || rotation == R270) -> 1.0
+        (tile is Hallway || tile is DarkHallway) && (rotation == R90 || rotation == R270) -> 3.5
+        tile is Stairs && (rotation == R90 || rotation == R270) -> 1.0
         else -> 0.0
     }
 
@@ -67,6 +67,10 @@ class MyView : View() {
             imageMarketRoom(roomsByTitle["Террасы"]!!, "4000")
             imageMarketRoom(roomsByTitle["Солярий"]!!, "2000")
             imageMarketRoom(roomsByTitle["Потайная комната"]!!, "1000")
+            imageMarketRoom(Stairs(), "3000")
+            imageMarketRoom(Hallway(), "3000")
+            imageMarketRoom(DarkHallway(), "3000")
+
             prefHeight = 60.0
         }
 
@@ -103,6 +107,7 @@ class MyView : View() {
                 imageRoom(PositionedTile(roomsByTitle["Комната отдыха"]!!, Position(0, 8, R90)))
                 imageRoom(PositionedTile(roomsByTitle["Хижина Хундинга"]!!, Position(5, -2, R270)))
                 imageRoom(PositionedTile(roomsByTitle["Верхний зал"]!!, Position(3, 0, R0)))
+                imageRoom(PositionedTile(Stairs(), Position(-3, -1, R0)))
                 onMouseReleased = onMouseReleasedEventHandler()
                 onMouseDragged = onMouseDraggedEventHandler()
                 toBack()
@@ -117,20 +122,17 @@ class MyView : View() {
         } else
             if (mainController.scale > 10) mainController.scale *= 0.9
 
-        val f = mainController.buyingTile?.toFigure(Position(0, 0, R0))
-        if (f != null) {
+        if (mainController.buyingTile != null) {
+            val f = PositionedTile(mainController.buyingTile!!, Position(0, 0, R0)).toFigure()
             mainController.widthBuy = f.width()
             mainController.heightBuy = f.height()
         }
 
-        filesMap.keys.forEach {
-            val tile = mainController.tilesMap[it]
-            if (tile != null) {
-                mainController.roomPropertyMap[it]!!.value = tile.toFigure().height()
-                mainController.roomPropertyMap["${it}_width"]!!.value = tile.toFigure().width()
-                mainController.roomPropertyMap["${it}_x"]!!.value = positionX(tile)
-                mainController.roomPropertyMap["${it}_y"]!!.value = positionY(tile)
-            }
+        mainController.tilesMap.forEach { (id, tile) ->
+            mainController.roomPropertyMap[id.toString()]!!.value = tile.toFigure().height()
+            mainController.roomPropertyMap["${id}_width"]!!.value = tile.toFigure().width()
+            mainController.roomPropertyMap["${id}_x"]!!.value = positionX(tile)
+            mainController.roomPropertyMap["${id}_y"]!!.value = positionY(tile)
         }
     }
 
@@ -147,14 +149,11 @@ class MyView : View() {
         mainController.xDrag = it.x
         mainController.yDrag = it.y
 
-        filesMap.keys.forEach {
-            val tile = mainController.tilesMap[it]
-            if (tile != null) {
-                mainController.roomPropertyMap[it]!!.value = tile.toFigure().height()
-                mainController.roomPropertyMap["${it}_width"]!!.value = tile.toFigure().width()
-                mainController.roomPropertyMap["${it}_x"]!!.value = positionX(tile)
-                mainController.roomPropertyMap["${it}_y"]!!.value = positionY(tile)
-            }
+        mainController.tilesMap.forEach { (id, tile) ->
+            mainController.roomPropertyMap[id.toString()]!!.value = tile.toFigure().height()
+            mainController.roomPropertyMap["${id}_width"]!!.value = tile.toFigure().width()
+            mainController.roomPropertyMap["${id}_x"]!!.value = positionX(tile)
+            mainController.roomPropertyMap["${id}_y"]!!.value = positionY(tile)
         }
     }
 
@@ -164,7 +163,8 @@ class MyView : View() {
     }
 
     private fun Region.imageRoom(tile: PositionedTile) = imageview {
-        mainController.tilesMap[tile.tile.title] = tile
+        val id = UUID.randomUUID()
+        mainController.tilesMap[id] = tile
         val simpleObjectProperty = mainController.imageProperty(tile.tile.title)
         imageProperty().bind(simpleObjectProperty)
 
@@ -179,10 +179,10 @@ class MyView : View() {
         layoutYProperty().bind(roomYProperty.property)
         layoutXProperty().bind(roomXProperty.property)
 
-        mainController.roomPropertyMap[tile.tile.title] = roomHeightProperty
-        mainController.roomPropertyMap[tile.tile.title + "_width"] = roomWidthProperty
-        mainController.roomPropertyMap[tile.tile.title + "_x"] = roomXProperty
-        mainController.roomPropertyMap[tile.tile.title + "_y"] = roomYProperty
+        mainController.roomPropertyMap[id.toString()] = roomHeightProperty
+        mainController.roomPropertyMap["${id}_width"] = roomWidthProperty
+        mainController.roomPropertyMap["${id}_x"] = roomXProperty
+        mainController.roomPropertyMap["${id}_y"] = roomYProperty
         rotate = tile.position.rotation.toNumber()
     }
 
@@ -196,7 +196,7 @@ class MyView : View() {
         return centerY - (tile.position.y - rotationShift) * mainController.scale + mainController.yShift
     }
 
-    private fun Region.imageMarketRoom(tile: RoomTile, price: String) = vbox {
+    private fun Region.imageMarketRoom(tile: Tile, price: String) = vbox {
         label {
             text = price
             padding = Insets(5.0)
@@ -231,7 +231,7 @@ class MyView : View() {
                     }
                 )
                 mainController.buyingTile = tile
-                val f = tile.toFigure(Position(0, 0, R0))
+                val f = PositionedTile(tile, Position(0, 0, R0)).toFigure()
                 mainController.widthBuy = f.width()
                 mainController.heightBuy = f.height()
                 mainController.buingImage = Image(mainController.imageUri(tile.title))
@@ -240,8 +240,8 @@ class MyView : View() {
             }
             val simpleObjectProperty = mainController.imageProperty(tile.title)
             imageProperty().bind(simpleObjectProperty)
-            fitWidth = tile.toFigure(Position(0, 0, R0)).width(40.0)
-            fitHeight = tile.toFigure(Position(0, 0, R0)).height(40.0)
+            fitWidth = PositionedTile(tile, Position(0, 0, R0)).toFigure().width(40.0)
+            fitHeight = PositionedTile(tile, Position(0, 0, R0)).toFigure().height(40.0)
         }
     }
 
@@ -277,7 +277,7 @@ private fun Double.toRotation(): Position.Rotation = when (this) {
 
 class MainController {
     val roomPropertyMap: MutableMap<String, RoomProperty> = mutableMapOf()
-    val tilesMap = mutableMapOf<String, PositionedTile>()
+    val tilesMap = mutableMapOf<UUID, PositionedTile>()
     val marketMap = mutableMapOf<String, SimpleBooleanProperty>()
     fun imageUri(name: String) = this.javaClass.getResource("/image/${filesMap[name]}")?.toURI().toString()
     fun imageProperty(name: String) = SimpleObjectProperty(Image(imageUri(name)))
@@ -318,7 +318,7 @@ class MainController {
     val rotationBuyProperty = SimpleDoubleProperty(0.0)
     var rotationBuy by rotationBuyProperty
 
-    var buyingTile: RoomTile? = null
+    var buyingTile: Tile? = null
     lateinit var buyingTilePane: Pane
 
     var xInit = 0.0
