@@ -17,7 +17,8 @@ fun PositionedTile.toFigure(): Figure = when (val tile = this.tile) {
     is RoomTile -> tile.toFigure(position)
     is Foyer -> Octagon(3, 3, position)
     is Stairs -> Rectangle(3, 1, position)
-    is Hallway -> TODO()
+    is Hallway -> Rectangle(6, 1, position)
+    is DarkHallway -> Rectangle(6, 1, position)
     else -> TODO()
 }
 

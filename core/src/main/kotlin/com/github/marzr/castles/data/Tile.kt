@@ -22,3 +22,7 @@ class Foyer(color: Player.PlayerColor): CorridorTile() {
 class Hallway : CorridorTile() {
     override val title = "Hallway"
 }
+
+class DarkHallway : CorridorTile() {
+    override val title = "Dark Hallway"
+}
