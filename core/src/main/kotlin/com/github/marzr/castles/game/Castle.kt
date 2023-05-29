@@ -10,7 +10,7 @@ sealed class TileAddResult {
 }
 
 class Castle {
-    private val tiles = mutableListOf<PositionedTile>()
+    val tiles = mutableListOf<PositionedTile>()
 
     fun addTile(positionedTile: PositionedTile): TileAddResult {
         if (positionedTile.tile is Foyer && tiles.isEmpty()) {

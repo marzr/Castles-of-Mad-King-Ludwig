@@ -21,10 +21,29 @@ fun PositionedTile.doorPositions(): Set<DoorPosition> = when (this.tile) {
             DoorPosition(x, y - 1, VERTICAL)
         )
     }
-    is Stairs -> TODO()
-    is Hallway -> TODO()
+
+    is Stairs -> with(position) {
+        if (rotation == R0 || rotation == R180)
+            setOf(DoorPosition(x, y, VERTICAL), DoorPosition(x + 3, y, VERTICAL))
+        else
+            setOf(DoorPosition(x, y, HORIZONTAL), DoorPosition(x, y - 3, HORIZONTAL))
+    }
+
+    is Hallway -> hallwayDoorPosition(position)
+    is DarkHallway -> hallwayDoorPosition(position)
     is RoomTile -> this.tile.doorPosition(position)
     else -> throw IllegalStateException()
+}
+
+fun hallwayDoorPosition(position: Position): Set<DoorPosition> = with(position) {
+    if (rotation == R0 || rotation == R180)
+        ((0..5).flatMap {
+            listOf(DoorPosition(x + it, y, HORIZONTAL), DoorPosition(x + it, y - 1, HORIZONTAL))
+        } + listOf(DoorPosition(x, y, VERTICAL), DoorPosition(x + 6, y, VERTICAL))).toSet()
+    else
+        ((0..5).flatMap {
+            listOf(DoorPosition(x, y - it, VERTICAL), DoorPosition(x + 6, y - it, VERTICAL))
+        } + listOf(DoorPosition(x, y, HORIZONTAL), DoorPosition(x, y - 6, HORIZONTAL))).toSet()
 }
 
 fun RoomTile.doorPosition(position: Position): Set<DoorPosition> = when (val f = this.toFigure(position)) {
