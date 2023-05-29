@@ -2,7 +2,9 @@ package com.github.marzr.castles
 
 import com.github.marzr.castles.data.*
 import com.github.marzr.castles.data.rooms.*
+import com.github.marzr.castles.game.Castle
 import com.github.marzr.castles.game.Player
+import com.github.marzr.castles.game.TileAddResult
 import com.github.marzr.castles.geometry.*
 import com.github.marzr.castles.geometry.Position.Rotation.*
 import javafx.application.Application
@@ -42,7 +44,7 @@ class MyView : View() {
         tile is MiddleRectangleRoom && (rotation == R90 || rotation == R270) -> 1.5
         tile is LargeRectangleRoom && (rotation == R90 || rotation == R270) -> 1.5
         tile is SmallRectangleRoom && (rotation == R90 || rotation == R270) -> 1.0
-        (tile is Hallway || tile is DarkHallway) && (rotation == R90 || rotation == R270) -> 3.5
+        (tile is Hallway || tile is DarkHallway) && (rotation == R90 || rotation == R270) -> 2.5
         tile is Stairs && (rotation == R90 || rotation == R270) -> 1.0
         else -> 0.0
     }
@@ -83,11 +85,18 @@ class MyView : View() {
                         val rotationShift = rotationShift(buyingTile!!, rotation)
                         val x = ((xBuy - xShift - centerX) / scale + rotationShift).roundToInt()
                         val y = ((-yBuy + yShift + centerY) / scale + rotationShift).roundToInt()
-                        castlePane.add(
-                            imageRoom(PositionedTile(buyingTile!!, Position(x, y, rotation)))
-                        )
-                        removeBuying = true
-                        marketMap[mainController.buyingTile!!.title]!!.value = true
+
+                        println("x = $x  y = $y")
+
+                        val tile = PositionedTile(buyingTile!!, Position(x, y, rotation))
+                        val addResult = castle.addTile(tile)
+                        if (addResult is TileAddResult.Success) {
+                            castlePane.add(
+                                imageRoom(tile)
+                            )
+                            removeBuying = true
+                        } else
+                            println(addResult)
                     }
                 }
                 onMousePressed = EventHandler {
@@ -102,12 +111,16 @@ class MyView : View() {
 
             pane {
                 mainController.castlePane = this
-                imageRoom(PositionedTile(Foyer(Player.PlayerColor.RED), Position(0, 0, R0)))
-                imageRoom(PositionedTile(roomsByTitle["Буфетная"]!!, Position(-2, 4, R270)))
-                imageRoom(PositionedTile(roomsByTitle["Комната отдыха"]!!, Position(0, 8, R90)))
-                imageRoom(PositionedTile(roomsByTitle["Хижина Хундинга"]!!, Position(5, -2, R270)))
-                imageRoom(PositionedTile(roomsByTitle["Верхний зал"]!!, Position(3, 0, R0)))
-                imageRoom(PositionedTile(Stairs(), Position(-3, -1, R0)))
+
+                mainController.castle.addTile(PositionedTile(Foyer(Player.PlayerColor.RED), Position(0, 0, R0)))
+                mainController.castle.addTile(PositionedTile(roomsByTitle["Большая спальня"]!!, Position(-2, 4, R270)))
+                mainController.castle.addTile(PositionedTile(roomsByTitle["Комната отдыха"]!!, Position(8, 4, R90)))
+                mainController.castle.addTile(PositionedTile(roomsByTitle["Хижина Хундинга"]!!, Position(5, -2, R270)))
+                mainController.castle.addTile(PositionedTile(roomsByTitle["Верхний зал"]!!, Position(3, 0, R0)))
+                mainController.castle.addTile(PositionedTile(Stairs(), Position(-3, -1, R0)))
+                mainController.castle.tiles.forEach {
+                    imageRoom(it)
+                }
                 onMouseReleased = onMouseReleasedEventHandler()
                 onMouseDragged = onMouseDraggedEventHandler()
                 toBack()
@@ -237,6 +250,7 @@ class MyView : View() {
                 mainController.buingImage = Image(mainController.imageUri(tile.title))
                 mainController.rotationBuy = 0.0
                 mainController.visible = true
+                mainController.marketMap[mainController.buyingTile!!.title]!!.value = true
             }
             val simpleObjectProperty = mainController.imageProperty(tile.title)
             imageProperty().bind(simpleObjectProperty)
@@ -276,6 +290,7 @@ private fun Double.toRotation(): Position.Rotation = when (this) {
 }
 
 class MainController {
+    val castle = Castle()
     val roomPropertyMap: MutableMap<String, RoomProperty> = mutableMapOf()
     val tilesMap = mutableMapOf<UUID, PositionedTile>()
     val marketMap = mutableMapOf<String, SimpleBooleanProperty>()
